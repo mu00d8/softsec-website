@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imprint | SoftSec Lab</title>
+  <meta name="description" content="Imprint for the SoftSec Lab website.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #efede9;
+      --navy:     #1c3052;
+      --ink:      #3c3c3c;
+      --ink-soft: #6a6a6a;
+      --rule:     #c4bfb8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+      font-weight: 300; font-size: 17px; line-height: 1.75;
+      color: var(--ink); background: var(--bg);
+      min-height: 100vh; display: flex; flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--navy); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Nav */
+    .site-nav { background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { font-weight: 600; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .nav-brand img { width: 22px; height: 22px; filter: brightness(10); }
+    .nav-back { font-size: 0.88rem; color: rgba(255,255,255,0.55); }
+    .nav-back:hover { color: #fff; text-decoration: none; }
+
+    /* Content */
+    main { flex: 1; padding: 64px 0 80px; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 640px) { .wrap { padding: 0 24px; } main { padding: 40px 0 56px; } }
+
+    .doc { max-width: 640px; }
+    .doc h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 36px; }
+    .doc h2 { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); opacity: 0.5; margin: 28px 0 8px; }
+    .doc h2:first-of-type { margin-top: 0; }
+    .doc p { font-size: 0.97rem; font-weight: 300; color: var(--ink); margin-bottom: 4px; line-height: 1.7; }
+
+    /* Footer */
+    footer { background: var(--navy); color: rgba(255,255,255,0.3); padding: 22px 0; font-size: 0.8rem; font-weight: 300; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    footer a { color: rgba(255,255,255,0.35); }
+    footer a:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">
+      <img src="softsec_logo.svg" alt="">
+      SoftSec Lab
+    </a>
+    <a class="nav-back" href="index.html">← Back</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div class="doc">
+      <h1>Imprint</h1>
+
+      <h2>Responsible for this website</h2>
+      <p>Moritz Schloegel</p>
+      <p>CISPA Helmholtz Center for Information Security</p>
+      <p>Stuhlsatzenhaus 5</p>
+      <p>66123 Saarbrücken, Germany</p>
+
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:moritz.schloegel@cispa.de">moritz.schloegel@cispa.de</a></p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span style="display:flex;align-items:center;gap:8px;"><img src="softsec_logo.svg" alt="" style="width:18px;height:18px;filter:brightness(0) invert(1);opacity:0.6;"><strong style="color:rgba(255,255,255,0.75);font-weight:600;">SoftSec Lab</strong> · <a href="https://cispa.de">CISPA Helmholtz Center for Information Security</a></span>
+    <span><a href="index.html">Home</a> · <a href="privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

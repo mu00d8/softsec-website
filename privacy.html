@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | SoftSec Lab</title>
+  <meta name="description" content="Privacy policy for the SoftSec Lab website.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #efede9;
+      --navy:     #1c3052;
+      --ink:      #3c3c3c;
+      --ink-soft: #6a6a6a;
+      --rule:     #c4bfb8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+      font-weight: 300; font-size: 17px; line-height: 1.75;
+      color: var(--ink); background: var(--bg);
+      min-height: 100vh; display: flex; flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--navy); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Nav */
+    .site-nav { background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { font-weight: 600; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .nav-brand img { width: 22px; height: 22px; filter: brightness(10); }
+    .nav-back { font-size: 0.88rem; color: rgba(255,255,255,0.55); }
+    .nav-back:hover { color: #fff; text-decoration: none; }
+
+    /* Content */
+    main { flex: 1; padding: 64px 0 80px; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 640px) { .wrap { padding: 0 24px; } main { padding: 40px 0 56px; } }
+
+    .doc { max-width: 640px; }
+    .doc h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 36px; }
+    .doc p { font-size: 0.97rem; font-weight: 300; color: var(--ink); margin-bottom: 16px; line-height: 1.75; }
+
+    /* Footer */
+    footer { background: var(--navy); color: rgba(255,255,255,0.3); padding: 22px 0; font-size: 0.8rem; font-weight: 300; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    footer a { color: rgba(255,255,255,0.35); }
+    footer a:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">
+      <img src="softsec_logo.svg" alt="">
+      SoftSec Lab
+    </a>
+    <a class="nav-back" href="index.html">← Back</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div class="doc">
+      <h1>Privacy Policy</h1>
+
+      <p>
+        This website is a static information page hosted with GitHub Pages and served through the custom domain softseclab.org. The website itself does not use cookies, analytics, tracking pixels, embedded third-party media, contact forms, or user accounts.
+      </p>
+      <p>
+        When you visit the website, GitHub may process technical access data required to deliver the site and protect the service, including your IP address, request metadata, timestamps, and browser or user-agent information. This processing is performed by GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA, as hosting provider for GitHub Pages. We do not receive GitHub Pages access logs and do not use this data for analytics or profiling.
+      </p>
+      <p>
+        The legal basis for making the website available and processing technically necessary access data is our legitimate interest in providing a secure and reliable information website under Article 6(1)(f) GDPR. GitHub may process data in the United States and relies on transfer safeguards described in GitHub's privacy documentation, including the EU-US Data Privacy Framework and standard contractual clauses where applicable.
+      </p>
+      <p>
+        Apart from technically necessary hosting data, we do not collect, store, profile, sell, or share personal data through this website. The controller for this website and any email communication is Moritz Schloegel at the address listed in the <a href="imprint.html">Imprint</a>.
+      </p>
+      <p>
+        If you contact us by email, your message and contact details are processed only to respond to your request. The legal basis is our legitimate interest in handling incoming inquiries; messages are retained only as long as needed for the conversation and any applicable record-keeping obligations.
+      </p>
+      <p>
+        Under the GDPR, you may request access, rectification, erasure, restriction of processing, data portability, or object to processing where applicable. You also have the right to lodge a complaint with the competent data protection supervisory authority. We do not use automated decision-making or profiling.
+      </p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span style="display:flex;align-items:center;gap:8px;"><img src="softsec_logo.svg" alt="" style="width:18px;height:18px;filter:brightness(0) invert(1);opacity:0.6;"><strong style="color:rgba(255,255,255,0.75);font-weight:600;">SoftSec Lab</strong> · <a href="https://cispa.de">CISPA Helmholtz Center for Information Security</a></span>
+    <span><a href="index.html">Home</a> · <a href="imprint.html">Imprint</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

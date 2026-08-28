@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoftSec Lab – CISPA Helmholtz Center</title>
+  <meta name="description" content="SoftSec Lab at CISPA. Software security research in fuzzing, program analysis, and empirical evaluation.">
+  <link rel="icon" href="softsec_logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    :root {
+      --bg:       #efede9;
+      --navy:     #1c3052;
+      --ink:      #3c3c3c;
+      --ink-soft: #6a6a6a;
+      --red:      #c82222;
+      --rule:     #c4bfb8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Offset anchor jumps by the sticky nav height so targets (incl. #top)
+       aren't hidden under it. */
+    html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+
+    body {
+      font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--navy); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong, b { font-weight: 600; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Nav ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 960px; margin: 0 auto; padding: 0 40px;
+      height: 54px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-weight: 600; font-size: 1rem; letter-spacing: 0.01em; color: #fff;
+      display: flex; align-items: center; gap: 9px; text-decoration: none;
+    }
+    .nav-brand img { width: 22px; height: 22px; filter: brightness(0) invert(1); opacity: 0.6; }
+    .nav-links { list-style: none; display: flex; gap: 4px; }
+    .nav-links a { padding: 5px 12px; font-size: 0.88rem; font-weight: 400; color: rgba(255,255,255,0.65); border-radius: 4px; }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.1); text-decoration: none; }
+    .nav-tools { display: flex; align-items: center; gap: 10px; }
+    .view-switcher {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
+    }
+    .view-mode {
+      appearance: none; background: none; border: none; color: rgba(255,255,255,0.5);
+      cursor: pointer; font: inherit; line-height: 1; padding: 6px 2px;
+    }
+    .view-mode:hover, .view-mode[aria-pressed="true"] { color: #fff; }
+    .view-mode[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 4px; }
+    @media (max-width: 760px) { .nav-links { display: none; } }
+    @media (max-width: 520px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-brand { font-size: 0; gap: 0; }
+      .view-switcher { font-size: 0.68rem; gap: 2px; }
+      .nav-tools { gap: 6px; }
+    }
+    .theme-toggle {
+      background: none; border: none; cursor: pointer; line-height: 1;
+      color: rgba(255,255,255,0.55); font-size: 0.95rem;
+      padding: 6px 8px; border-radius: 4px; transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .theme-toggle i { display: inline-block; width: 1em; text-align: center; }
+
+    /* ── Dark mode ── */
+    [data-theme="dark"] {
+      --bg: #0f1c2d;
+      --navy: #081422;
+      --ink: #dce8f5;
+      --ink-soft: #8aa4bf;
+      --rule: rgba(255,255,255,0.1);
+      --red: #e06060;
+    }
+    [data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+    [data-theme="dark"] a { color: #7ab0f0; }
+    [data-theme="dark"] a:hover { color: #a8ccf8; }
+    [data-theme="dark"] h2.section-heading { color: #dce8f5; }
+    [data-theme="dark"] .section-eyebrow { color: #7ab0f0; opacity: 0.9; }
+    [data-theme="dark"] .track-num { border-color: #7ab0f0; color: #7ab0f0; }
+    [data-theme="dark"] .track h3 { color: #dce8f5; }
+    [data-theme="dark"] details.pub-year { border-color: rgba(255,255,255,0.1); }
+    [data-theme="dark"] summary.pub-yr-summary { color: #7ab0f0; opacity: 0.9; }
+    [data-theme="dark"] summary.pub-yr-summary::before { color: #7ab0f0; }
+    [data-theme="dark"] .pub-entry { border-color: rgba(255,255,255,0.08); }
+    [data-theme="dark"] .pub-entry .pt { color: #dce8f5; }
+    [data-theme="dark"] .pub-entry .pa strong { color: #8fb0de; }
+    [data-theme="dark"] .pub-entry .pt a { color: #dce8f5; }
+    [data-theme="dark"] .pub-entry .pt a:hover { color: #7ab0f0; }
+    [data-theme="dark"] .pub-yr-header { color: #7ab0f0; opacity: 0.9; }
+    [data-theme="dark"] .venue-tag { color: #7ab0f0; border-color: rgba(122,176,240,0.3); }
+    [data-theme="dark"] .venue-tag:hover,
+    [data-theme="dark"] .venue-tag[aria-pressed="true"] { border-color: #7ab0f0; color: #a8ccf8; }
+    [data-theme="dark"] .pub-filter strong,
+    [data-theme="dark"] .pub-filter button { color: #7ab0f0; }
+    [data-theme="dark"] .pub-filter button:hover { border-color: #7ab0f0; }
+    [data-theme="dark"] .person .pname { color: #dce8f5; }
+    [data-theme="dark"] .person .pname a { color: #dce8f5; }
+    [data-theme="dark"] .person .prole a { color: var(--ink-soft); }
+    [data-theme="dark"] .person .plinks a { color: var(--ink-soft); }
+    [data-theme="dark"] .person .plinks a:hover { color: #7ab0f0; }
+    [data-theme="dark"] .news-text strong { color: #dce8f5; }
+    [data-theme="dark"] .pos-name { color: #dce8f5; }
+    [data-theme="dark"] .pos-btn { border-color: #7ab0f0; color: #7ab0f0; }
+    [data-theme="dark"] .pos-btn:hover { background: #7ab0f0; color: var(--bg); }
+    [data-theme="dark"] .contact-block h3 { color: #7ab0f0; opacity: 0.8; }
+    [data-theme="dark"] .contact-block p { color: var(--ink-soft); }
+    [data-theme="dark"] .contact-block a { color: #7ab0f0; }
+
+    /* ── Wrap ── */
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 640px) { .wrap { padding: 0 24px; } }
+
+    /* ── HERO — navy ── */
+    .hero {
+      background: var(--navy);
+      padding: 72px 0 64px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.2);
+      padding: 4px 12px; margin-bottom: 28px;
+    }
+    .hero-badge img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+      color: #fff; margin-bottom: 8px;
+    }
+    .hero h1 span { font-weight: 300; color: rgba(255,255,255,0.7); }
+    .hero-sub { font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.45); margin-bottom: 32px; }
+    .hero-rule { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 28px 0; }
+    .hero-desc { font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.75); max-width: 680px; margin-bottom: 36px; }
+    .hero-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.12); }
+    .hero-affil { font-size: 0.85rem; font-weight: 300; color: rgba(255,255,255,0.4); }
+    .hero-links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; }
+    .hero-links a { color: rgba(255,255,255,0.55); font-weight: 400; }
+    .hero-links a:hover { color: #fff; text-decoration: none; }
+
+    /* ── All body sections — uniform bg ── */
+    .section { padding: 72px 0; border-top: 1px solid var(--rule); }
+    .section-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--navy); opacity: 0.45; margin-bottom: 6px;
+    }
+    h2.section-heading {
+      font-size: clamp(1.4rem, 3vw, 1.85rem); font-weight: 700;
+      letter-spacing: -0.02em; color: var(--navy); margin-bottom: 32px;
+    }
+    .research-lead { font-size: 1rem; color: var(--ink); margin: -22px 0 18px; }
+
+    /* ── Research tracks ── */
+    .tracks { display: flex; flex-direction: column; }
+    .track { display: grid; grid-template-columns: 44px 1fr; gap: 22px; padding: 28px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+    .track:last-child { border-bottom: none; }
+    .track-num {
+      width: 40px; height: 40px; border: 2px solid var(--navy); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.88rem; font-weight: 600; color: var(--navy); flex-shrink: 0; margin-top: 2px;
+    }
+    .track h3 { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .track p { font-size: 0.95rem; font-weight: 300; color: var(--ink); }
+    .track-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .track-tag { font-size: 0.73rem; color: var(--ink-soft); border: 1px solid var(--rule); padding: 2px 8px; text-decoration: none; }
+    a.track-tag:hover { color: var(--navy); border-color: var(--navy); text-decoration: none; }
+    [data-theme="dark"] a.track-tag:hover { color: #a8ccf8; border-color: #a8ccf8; }
+
+    /* ── Publications ── */
+    details.pub-year { border-top: 1px solid var(--rule); }
+    details.pub-year[open] { margin-bottom: 8px; }
+    summary.pub-yr-summary {
+      display: flex; align-items: center; gap: 8px;
+      list-style: none; cursor: pointer; user-select: none;
+      padding: 12px 0;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--navy); opacity: 0.55;
+    }
+    summary.pub-yr-summary::-webkit-details-marker { display: none; }
+    summary.pub-yr-summary::before {
+      content: "▶";
+      font-size: 0.55rem; color: var(--navy);
+      transition: transform 0.15s ease;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    details.pub-year[open] summary.pub-yr-summary::before { transform: rotate(90deg); }
+    summary.pub-yr-summary:hover { opacity: 0.85; }
+    .pub-yr-entries { padding-bottom: 8px; }
+    .pub-entry { padding: 14px 0; border-bottom: 1px solid rgba(196,191,184,0.45); scroll-margin-top: 65px; }
+    .pub-entry:last-of-type { border-bottom: none; }
+    .pub-entry .pt { font-size: 0.97rem; font-weight: 400; color: var(--ink); margin-bottom: 5px; line-height: 1.45; }
+    .pub-entry .pt a { color: var(--ink); }
+    .pub-entry .pt a:hover { color: var(--navy); }
+    .pub-entry .pa { font-size: 0.85rem; font-weight: 300; color: var(--ink-soft); margin-bottom: 5px; }
+    .pub-entry .pa strong { font-weight: 400; color: #5273a4; }
+    .pub-filter {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+      margin: -16px 0 22px; font-size: 0.82rem; color: var(--ink-soft);
+    }
+    .pub-filter[hidden] { display: none; }
+    .pub-filter-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pub-filter-count { font-size: 0.78rem; }
+    .pub-filter strong { color: var(--navy); }
+    .pub-filter button {
+      appearance: none; border: 1px solid var(--rule); background: transparent;
+      color: var(--navy); cursor: pointer; font: inherit; font-size: 0.78rem;
+      width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;
+      padding: 0; line-height: 1;
+    }
+    .pub-filter button:hover { border-color: var(--navy); }
+    .venue-tag, .award-tag, .trophy-tag {
+      display: inline-flex; align-items: center;
+      min-height: 21px; line-height: 1;
+      font-size: 0.71rem;
+      padding: 2px 7px; margin-right: 5px;
+    }
+    .award-tag, .trophy-tag {
+      appearance: none; cursor: pointer; font-family: inherit;
+      background: transparent;
+    }
+    .award-tag:hover, .award-tag[aria-pressed="true"],
+    .trophy-tag:hover, .trophy-tag[aria-pressed="true"] {
+      border-color: var(--red); background: rgba(200,34,34,0.08);
+    }
+    .award-tag {
+      font-weight: 600;
+      color: var(--red); border: 1px solid rgba(200,34,34,0.35);
+      letter-spacing: 0.02em;
+    }
+    .award-tag::before {
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      content: "\f559";
+      margin-right: 4px;
+      font-size: 0.85em;
+    }
+    .trophy-tag {
+      font-weight: 600;
+      color: var(--red); border: 1px solid rgba(200,34,34,0.35);
+      letter-spacing: 0.02em;
+    }
+    .trophy-tag::before {
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      content: "\f091";
+      margin-right: 4px;
+      font-size: 0.85em;
+    }
+    .venue-tag {
+      appearance: none; background: transparent; cursor: pointer;
+      font-weight: 400; font-family: inherit;
+      color: var(--navy); border: 1px solid rgba(28,48,82,0.25);
+    }
+    .venue-tag:hover, .venue-tag[aria-pressed="true"] { border-color: var(--navy); color: var(--navy); }
+
+    /* ── People ── */
+    .people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 36px 28px; }
+    .person { text-align: center; }
+    .person img { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; margin: 0 auto 13px; transition: opacity 0.15s; }
+    .person .pphoto { display: block; width: 88px; line-height: 0; margin: 0 auto; }
+    .person .pphoto:hover img { opacity: 0.85; }
+    .person .pname { font-size: 0.97rem; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+    .person .pname a { color: var(--navy); }
+    .person .prole { font-size: 0.78rem; font-weight: 300; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+    .person .prole a { color: var(--ink-soft); }
+    .person .prole a:hover { color: var(--navy); text-decoration: none; }
+    .person .plinks { display: flex; gap: 13px; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 3px; }
+    .person .plinks a { color: var(--ink-soft); font-size: 1.05rem; line-height: 1; }
+    .person .plinks a:hover { color: var(--navy); text-decoration: none; }
+
+    /* ── News ── */
+    .news-entries { display: flex; flex-direction: column; }
+    .news-entry { display: grid; grid-template-columns: 92px 1fr; gap: 22px; padding: 16px 0; border-bottom: 1px solid rgba(196,191,184,0.45); align-items: start; }
+    .news-entry:last-child { border-bottom: none; }
+    .news-date { font-size: 0.8rem; font-weight: 300; color: var(--ink-soft); padding-top: 3px; font-variant-numeric: tabular-nums; }
+    .news-text { font-size: 0.97rem; font-weight: 300; color: var(--ink); line-height: 1.6; }
+    .news-text strong { font-weight: 600; color: var(--navy); }
+    .news-text .award { color: var(--red); font-weight: 600; }
+
+    /* ── Positions ── */
+    .join-lead { font-size: 1.05rem; font-weight: 300; max-width: 660px; margin-bottom: 40px; }
+    .pos-list { list-style: none; }
+    .pos-item { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+    .pos-item:last-child { border-bottom: none; }
+    .pos-name { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+    .pos-desc { font-size: 0.9rem; font-weight: 300; color: var(--ink-soft); }
+    .pos-btn { border: 1.5px solid var(--navy); color: var(--navy); font-size: 0.83rem; font-weight: 600; padding: 7px 16px; white-space: nowrap; display: inline-block; transition: background 0.15s, color 0.15s; }
+    .pos-btn:hover { background: var(--navy); color: #fff; text-decoration: none; }
+
+    /* ── Contact ── */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; margin-top: 0; align-items: start; }
+    @media (max-width: 580px) { .contact-grid { grid-template-columns: 1fr; gap: 28px; } }
+    .contact-block h3 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--navy); opacity: 0.45; margin-bottom: 12px; }
+    .contact-block p, .contact-block a { display: block; font-size: 0.93rem; font-weight: 300; color: var(--ink); margin-bottom: 3px; }
+    .contact-block a { color: var(--navy); }
+    .contact-block a:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    footer { background: var(--navy); color: rgba(255,255,255,0.3); padding: 22px 0; font-size: 0.8rem; font-weight: 300; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    footer a { color: rgba(255,255,255,0.35); }
+    footer a:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+    /* ── Easter egg views ── */
+    .cfg-hd, .cfg-edge, .cfg-switch, .cfg-join, .cfg-backedge, .cfg-tail, .cfg-minimap, .research-cases { display: none; }
+
+    [data-view="graph"] {
+      --cfg-line: rgba(28,48,82,0.38);
+      --cfg-line-soft: rgba(28,48,82,0.16);
+      --cfg-label: var(--navy);
+      --cfg-muted: var(--ink-soft);
+      --cfg-head: rgba(28,48,82,0.08);
+      --cfg-block: rgba(239,237,233,0.96);
+      --cfg-true: #1f9d57;
+      --cfg-false: #c0392b;
+    }
+    [data-view="graph"] body {
+      background:
+        linear-gradient(var(--cfg-line-soft) 1px, transparent 1px),
+        linear-gradient(90deg, var(--cfg-line-soft) 1px, transparent 1px),
+        var(--bg);
+      background-size: 26px 26px;
+    }
+    [data-view="graph"] .nav-brand,
+    [data-view="hex"] .nav-brand {
+      font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+      gap: 0;
+      position: relative;
+    }
+    [data-view="graph"] .nav-brand img,
+    [data-view="hex"] .nav-brand img {
+      margin-right: 9px;
+    }
+    [data-view="graph"] .nav-brand::after,
+    [data-view="hex"] .nav-brand::after {
+      content: ".bin";
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: "Fira Mono", ui-monospace, monospace;
+      color: rgba(255,255,255,0.42);
+      font-weight: 400;
+      font-size: 0.78rem;
+    }
+    [data-view="graph"] .cfg-minimap {
+      display: block;
+      position: fixed;
+      top: 78px;
+      left: max(14px, calc((100vw - 940px) / 2 - 186px));
+      z-index: 20;
+      width: 172px;
+      padding: 9px 7px 10px;
+      border: 1px solid var(--cfg-line);
+      background: var(--cfg-block);
+      box-shadow: 5px 5px 0 rgba(28,48,82,0.12);
+      font-family: "Fira Mono", ui-monospace, monospace;
+      line-height: 1.2;
+    }
+    [data-view="graph"] .cfg-minimap-title {
+      margin-bottom: 8px;
+      color: var(--cfg-label);
+      font-weight: 700;
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    [data-view="graph"] .cfg-mini-graph {
+      position: relative;
+      height: 218px;
+    }
+    [data-view="graph"] .cfg-mini-block {
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15px;
+      border: 1px solid var(--cfg-line);
+      background: var(--cfg-head);
+      color: var(--cfg-label);
+      overflow: hidden;
+      font-size: 0.48rem;
+      font-weight: 700;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    [data-view="graph"] .cfg-mini-block:hover {
+      border-color: var(--cfg-label);
+      background: rgba(122,176,240,0.12);
+      text-decoration: none;
+    }
+    [data-view="graph"] .cfg-mini-block span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    [data-view="graph"] .cfg-mini-block.b-main {
+      left: 55px;
+      width: 54px;
+    }
+    [data-view="graph"] .cfg-mini-block.b-case {
+      width: 34px;
+      height: 20px;
+    }
+    [data-view="graph"] .b-entry { top: 0; }
+    [data-view="graph"] .b-research { top: 32px; height: 18px; }
+    [data-view="graph"] .b-fuzzing { left: 16px; top: 76px; }
+    [data-view="graph"] .b-analysis { left: 65px; top: 76px; }
+    [data-view="graph"] .b-meta { left: 114px; top: 76px; }
+    [data-view="graph"] .b-pubs { top: 122px; }
+    [data-view="graph"] .b-team { top: 150px; }
+    [data-view="graph"] .b-news { top: 178px; }
+    [data-view="graph"] .b-join { top: 204px; }
+    [data-view="graph"] .b-contact {
+      left: 120px;
+      top: 204px;
+      width: 34px;
+    }
+    [data-view="graph"] .b-contact i {
+      font-size: 0.48rem;
+      line-height: 1;
+    }
+    [data-view="graph"] .cfg-mini-edge {
+      position: absolute;
+      z-index: 1;
+      background: var(--cfg-line);
+      pointer-events: none;
+    }
+    [data-view="graph"] .cfg-mini-edge.v {
+      width: 1px;
+      left: 82px;
+    }
+    [data-view="graph"] .cfg-mini-edge.h { height: 1px; }
+    [data-view="graph"] .e-entry { top: 15px; height: 17px; }
+    [data-view="graph"] .e-switch-stem { top: 50px; height: 13px; }
+    [data-view="graph"] .e-switch-bar {
+      left: 34px;
+      top: 63px;
+      width: 97px;
+    }
+    [data-view="graph"] .e-case-a,
+    [data-view="graph"] .e-case-b,
+    [data-view="graph"] .e-case-c {
+      top: 63px;
+      height: 13px;
+      width: 1px;
+    }
+    [data-view="graph"] .e-case-a { left: 33px; }
+    [data-view="graph"] .e-case-b { left: 82px; }
+    [data-view="graph"] .e-case-c { left: 131px; }
+    [data-view="graph"] .e-join-bar {
+      left: 33px;
+      top: 109px;
+      width: 99px;
+    }
+    [data-view="graph"] .e-join-a,
+    [data-view="graph"] .e-join-b,
+    [data-view="graph"] .e-join-c {
+      top: 96px;
+      height: 13px;
+      width: 1px;
+    }
+    [data-view="graph"] .e-join-a { left: 33px; }
+    [data-view="graph"] .e-join-b { left: 82px; }
+    [data-view="graph"] .e-join-c { left: 131px; }
+    [data-view="graph"] .e-join-stem { top: 109px; height: 13px; }
+    [data-view="graph"] .e-pubs { top: 137px; height: 13px; }
+    [data-view="graph"] .e-team { top: 165px; height: 13px; }
+    [data-view="graph"] .e-news { top: 193px; height: 11px; background: var(--cfg-false); }
+    [data-view="graph"] .e-contact {
+      left: 109px;
+      top: 211px;
+      width: 11px;
+      background: var(--cfg-false);
+    }
+    [data-view="graph"] .e-loop-news,
+    [data-view="graph"] .e-loop-join {
+      width: 0;
+      border-left: 1px solid var(--cfg-true);
+      background: transparent;
+    }
+    [data-view="graph"] .e-loop-news::before,
+    [data-view="graph"] .e-loop-news::after,
+    [data-view="graph"] .e-loop-join::before,
+    [data-view="graph"] .e-loop-join::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      border-top: 1px solid var(--cfg-true);
+    }
+    [data-view="graph"] .e-loop-news::before,
+    [data-view="graph"] .e-loop-news::after { width: 11px; }
+    [data-view="graph"] .e-loop-join::before,
+    [data-view="graph"] .e-loop-join::after { width: 51px; }
+    [data-view="graph"] .e-loop-news::before,
+    [data-view="graph"] .e-loop-join::before { top: 0; }
+    [data-view="graph"] .e-loop-news::after,
+    [data-view="graph"] .e-loop-join::after { bottom: 0; }
+    [data-view="graph"] .e-loop-news {
+      left: 44px;
+      top: 129px;
+      height: 57px;
+    }
+    [data-view="graph"] .e-loop-join {
+      left: 4px;
+      top: 41px;
+      height: 171px;
+    }
+    [data-view="graph"] main {
+      position: relative;
+      max-width: 940px;
+      margin: 36px auto 56px;
+      padding: 0 78px;
+    }
+    [data-view="graph"] .hero,
+    [data-view="graph"] .section {
+      position: relative;
+      z-index: 2;
+      background: var(--cfg-block);
+      border: 2px solid var(--cfg-line);
+      box-shadow: 7px 7px 0 rgba(28,48,82,0.14);
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    [data-view="graph"] .cfg-hd {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      background: var(--cfg-head);
+      border-bottom: 1px solid var(--cfg-line);
+      font-family: "Fira Mono", ui-monospace, monospace;
+      font-size: 0.74rem;
+      line-height: 1.2;
+    }
+    .cfg-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cfg-label);
+      box-shadow: 0 0 0 3px rgba(28,48,82,0.12);
+      flex-shrink: 0;
+    }
+    .cfg-addr { color: var(--cfg-muted); }
+    .cfg-label { color: var(--cfg-label); font-weight: 700; }
+    .cfg-flags {
+      margin-left: auto;
+      color: var(--cfg-muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    [data-view="graph"] .wrap { max-width: none; padding: 28px 34px 34px; }
+    [data-view="graph"] .cfg-tail {
+      display: block;
+      margin: 14px -4px -22px;
+      padding: 8px 4px 0;
+      border-top: 1px solid var(--cfg-line-soft);
+      color: var(--cfg-label);
+      font-family: "Fira Mono", ui-monospace, monospace;
+      font-size: 0.74rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    [data-view="graph"] .cfg-edge {
+      position: relative;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      z-index: 1;
+      --edge: var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-edge.e-true  { --edge: var(--cfg-true); }
+    [data-view="graph"] .cfg-edge.e-false { --edge: var(--cfg-false); }
+    [data-view="graph"] .cfg-edge .spine {
+      width: 0;
+      height: 39px;
+      border-left: 2px solid var(--edge);
+    }
+    [data-view="graph"] .cfg-edge .head {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 9px solid var(--edge);
+    }
+    [data-view="graph"] .hero h1,
+    [data-view="graph"] .hero h1 span,
+    [data-view="graph"] .hero-desc,
+    [data-view="graph"] .hero-desc a { color: var(--ink) !important; }
+    [data-view="graph"] .hero-rule { border-top-color: var(--rule); }
+    [data-view="graph"] .research-lead { margin-top: -16px; }
+    [data-view="graph"] #research .tracks { display: none; }
+    [data-view="graph"] #research .track-num { display: none; }
+    [data-view="graph"] .research-cases {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+      margin: 0;
+    }
+    [data-view="graph"] .research-case {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 14px;
+      border: 2px solid var(--cfg-line);
+      background: var(--cfg-block);
+      box-shadow: 7px 7px 0 rgba(28,48,82,0.14);
+    }
+    [data-view="graph"] .research-case::before {
+      content: attr(data-case);
+      display: block;
+      margin: -14px -14px 12px;
+      padding: 5px 9px;
+      border-bottom: 1px solid var(--cfg-line);
+      background: var(--cfg-head);
+      color: var(--cfg-label);
+      font-family: "Fira Mono", ui-monospace, monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    [data-view="graph"] .research-case h3 {
+      font-size: 0.98rem;
+      line-height: 1.35;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    [data-view="graph"] .research-case p {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+    [data-view="graph"] .research-case .track-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    [data-view="graph"] .research-case .cfg-tail {
+      margin: auto 0 -6px;
+      padding: 8px 0 0;
+      font-size: 0.68rem;
+    }
+    [data-view="graph"] .cfg-switch {
+      position: relative;
+      display: block;
+      height: 58px;
+      margin: 0;
+      width: 100%;
+    }
+    [data-view="graph"] .cfg-switch .stem {
+      position: absolute;
+      left: calc(50% - 1px);
+      top: 0;
+      height: 21px;
+      border-left: 2px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-switch .bar {
+      position: absolute;
+      left: calc((100% - 32px) / 6);
+      right: calc((100% - 32px) / 6);
+      top: 20px;
+      border-top: 2px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-switch .drop {
+      position: absolute;
+      top: 20px;
+      height: 28px;
+      border-left: 2px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-switch .drop::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 9px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-switch .drop-a { left: calc((100% - 32px) / 6 - 1px); }
+    [data-view="graph"] .cfg-switch .drop-b { left: calc(50% - 1px); }
+    [data-view="graph"] .cfg-switch .drop-c { left: calc(100% - (100% - 32px) / 6 - 1px); }
+    [data-view="graph"] .cfg-join {
+      position: relative;
+      display: block;
+      height: 58px;
+      margin: 0;
+      width: 100%;
+      z-index: 1;
+    }
+    [data-view="graph"] .cfg-join .drop,
+    [data-view="graph"] .cfg-join .stem {
+      position: absolute;
+      border-left: 2px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-join .drop {
+      top: 0;
+      height: 28px;
+    }
+    [data-view="graph"] .cfg-join .bar {
+      position: absolute;
+      left: calc((100% - 32px) / 6);
+      right: calc((100% - 32px) / 6);
+      top: 28px;
+      border-top: 2px solid var(--cfg-line);
+    }
+    [data-view="graph"] .cfg-join .stem {
+      left: calc(50% - 1px);
+      top: 28px;
+      height: 30px;
+    }
+    [data-view="graph"] .cfg-join .drop-a { left: calc((100% - 32px) / 6 - 1px); }
+    [data-view="graph"] .cfg-join .drop-b { left: calc(50% - 1px); }
+    [data-view="graph"] .cfg-join .drop-c { left: calc(100% - (100% - 32px) / 6 - 1px); }
+    [data-view="graph"] .cfg-backedge {
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 0;
+      z-index: 3;
+      pointer-events: none;
+      /* Routed in main's reserved 78px side-padding lane. --be-x is the rail;
+         --be-entry is where the edge drops into the destination's top edge
+         (26px = one background-grid field off centre, beside the centred
+         forward edge). --be-gap is the clearance above it. */
+      --be-x: 34px;
+      --be-entry: calc(50% - 26px);
+      --be-drop: 18px;
+      --be-gap: 22px;
+      --be-src: 0px;
+      --be-tgt: 0px;
+      opacity: 0;
+    }
+    /* Vertical rail: from above the destination's top down to the exit turn. */
+    [data-view="graph"] .cfg-backedge .be-rail {
+      position: absolute;
+      left: var(--be-x);
+      top: calc(var(--be-tgt) - var(--be-gap));
+      height: calc(var(--be-src) + var(--be-drop) - var(--be-tgt) + var(--be-gap));
+      border-left: 2px solid var(--cfg-true);
+    }
+    /* Exit: drop a little straight down out of the block, offset from the
+       fallthrough edge so the two outgoing edges straddle the block centre. */
+    [data-view="graph"] .cfg-backedge .be-stem {
+      position: absolute;
+      left: calc(50% - 26px);
+      top: var(--be-src);
+      height: calc(var(--be-drop) + 2px);
+      border-left: 2px solid var(--cfg-true);
+    }
+    [data-view="graph"] .cfg-backedge .be-out,
+    [data-view="graph"] .cfg-backedge .be-top {
+      position: absolute;
+      left: var(--be-x);
+      border-top: 2px solid var(--cfg-true);
+    }
+    /* Exit turn: run left to the rail. */
+    [data-view="graph"] .cfg-backedge .be-out {
+      right: calc(50% + 24px);
+      top: calc(var(--be-src) + var(--be-drop));
+    }
+    /* Entry: come over the top of the destination, then drop into its top edge. */
+    [data-view="graph"] .cfg-backedge .be-top {
+      width: calc(var(--be-entry) - var(--be-x) + 2px);
+      top: calc(var(--be-tgt) - var(--be-gap));
+    }
+    [data-view="graph"] .cfg-backedge .be-in {
+      position: absolute;
+      left: var(--be-entry);
+      top: calc(var(--be-tgt) - var(--be-gap));
+      height: var(--be-gap);
+      border-left: 2px solid var(--cfg-true);
+    }
+    [data-view="graph"] .cfg-backedge .be-in::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: -6px;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid var(--cfg-true);
+    }
+    /* Right-side loop: same geometry, mirrored across the content centre. */
+    [data-view="graph"] .cfg-backedge--r { transform: scaleX(-1); }
+    [data-view="graph"] .track,
+    [data-view="graph"] .pub-entry,
+    [data-view="graph"] .news-entry { border-color: rgba(28,48,82,0.18); }
+    [data-view="graph"] .people-grid { gap: 24px; }
+    [data-theme="dark"][data-view="graph"] {
+      --cfg-line: rgba(122,176,240,0.36);
+      --cfg-line-soft: rgba(122,176,240,0.08);
+      --cfg-label: #7ab0f0;
+      --cfg-muted: #8aa4bf;
+      --cfg-head: rgba(122,176,240,0.08);
+      --cfg-block: rgba(15,28,45,0.96);
+      --cfg-true: #2ea043;
+      --cfg-false: #dc4545;
+    }
+    [data-theme="dark"][data-view="graph"] body {
+      background-color: #0f1c2d;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='160' viewBox='0 0 1440 160'%3E%3Cg fill='%237ab0f0' fill-opacity='0.04' font-family='monospace' font-size='13' letter-spacing='2'%3E%3Ctext x='0' y='20' textLength='1440' lengthAdjust='spacing'%3E01001000 10110110 00101101 11100010 01010101 10011001 01101000 00011101 10100110 01001011 11010010 00110101%3C/text%3E%3Ctext x='0' y='52' textLength='1440' lengthAdjust='spacing'%3E10010110 01000011 11101001 00110100 01111100 10100001 01011010 11000101 00101110 11110000 01010111 10001001%3C/text%3E%3Ctext x='0' y='84' textLength='1440' lengthAdjust='spacing'%3E00110010 11110100 01001111 10001000 01100101 00101110 11011010 01010011 01110001 10011100 00010110 11101010%3C/text%3E%3Ctext x='0' y='116' textLength='1440' lengthAdjust='spacing'%3E11100001 00010110 10101001 01000100 11001101 00110011 10010010 01101110 01011001 11100100 10110010 00101011%3C/text%3E%3Ctext x='0' y='148' textLength='1440' lengthAdjust='spacing'%3E01101100 10001010 11010101 00111100 10100101 01010010 11111000 00010011 10000110 01110101 00101001 11001110%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 1440px 160px;
+      background-attachment: fixed;
+    }
+    [data-theme="dark"][data-view="graph"] .hero,
+    [data-theme="dark"][data-view="graph"] .section {
+      box-shadow: 0 12px 26px rgba(0,0,0,0.26), 0 0 0 1px rgba(122,176,240,0.04);
+    }
+    [data-theme="dark"][data-view="graph"] .cfg-minimap {
+      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(122,176,240,0.04);
+    }
+    [data-theme="dark"][data-view="graph"] .research-case {
+      background: var(--cfg-block);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(122,176,240,0.04);
+    }
+    [data-theme="dark"][data-view="graph"] .research-case h3,
+    [data-theme="dark"][data-view="graph"] .research-case p { color: var(--ink); }
+
+    .hex-view {
+      display: none;
+      min-height: calc(100vh - 54px);
+      padding: 42px 24px 64px;
+      background: #f7f7f4;
+      color: #202020;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .hex-view pre {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0;
+      padding: 22px 24px;
+      border: 1px solid #d2d0ca;
+      background: #fffdfa;
+      box-shadow: 0 18px 38px rgba(28,48,82,0.12);
+      overflow-x: auto;
+      white-space: pre;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.65;
+    }
+    [data-view="hex"] body { background: #f7f7f4; }
+    [data-view="hex"] main,
+    [data-view="hex"] footer { display: none; }
+    [data-view="hex"] .hex-view { display: flex; }
+    [data-theme="dark"][data-view="hex"] body,
+    [data-theme="dark"][data-view="hex"] .hex-view {
+      background: #0a121e;
+      color: #d6e4f5;
+    }
+    [data-theme="dark"][data-view="hex"] .hex-view pre {
+      background: #101d30;
+      border-color: rgba(125,170,235,0.24);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.42);
+    }
+
+    @media (max-width: 1320px) {
+      [data-view="graph"] .cfg-minimap { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .track { grid-template-columns: 1fr; }
+      .pos-item { grid-template-columns: 1fr; }
+      .hero-meta { flex-direction: column; align-items: flex-start; }
+      [data-view="graph"] .wrap { padding: 22px 18px 26px; }
+      [data-view="graph"] main { margin: 28px auto 44px; padding: 0 14px; }
+      [data-view="graph"] .track-num { display: none; }
+      [data-view="graph"] .research-cases { grid-template-columns: 1fr; }
+      [data-view="graph"] .cfg-switch,
+      [data-view="graph"] .cfg-join,
+      [data-view="graph"] .cfg-backedge { display: none; }
+      .hex-view { padding: 22px 18px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav (navy, matches hero) -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top">
+      <img src="softsec_logo.svg" alt="">
+      SoftSec Lab
+    </a>
+    <ul class="nav-links">
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#people">People</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#join">Join Us</a></li>
+    </ul>
+    <div class="nav-tools">
+      <div class="view-switcher" aria-label="Presentation mode">
+        <button class="view-mode" type="button" data-view-mode="graph">graph</button>
+        <span aria-hidden="true">|</span>
+        <button class="view-mode" type="button" data-view-mode="linear">linear</button>
+        <span aria-hidden="true">|</span>
+        <button class="view-mode" type="button" data-view-mode="hex">hex</button>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<nav class="cfg-minimap" aria-label="Graph minimap">
+  <div class="cfg-minimap-title">CFG</div>
+  <div class="cfg-mini-graph">
+    <span class="cfg-mini-edge v e-entry"></span>
+    <span class="cfg-mini-edge v e-switch-stem"></span>
+    <span class="cfg-mini-edge h e-switch-bar"></span>
+    <span class="cfg-mini-edge e-case-a"></span>
+    <span class="cfg-mini-edge e-case-b"></span>
+    <span class="cfg-mini-edge e-case-c"></span>
+    <span class="cfg-mini-edge h e-join-bar"></span>
+    <span class="cfg-mini-edge e-join-a"></span>
+    <span class="cfg-mini-edge e-join-b"></span>
+    <span class="cfg-mini-edge e-join-c"></span>
+    <span class="cfg-mini-edge v e-join-stem"></span>
+    <span class="cfg-mini-edge v e-pubs"></span>
+    <span class="cfg-mini-edge v e-team"></span>
+    <span class="cfg-mini-edge v e-news"></span>
+    <span class="cfg-mini-edge h e-contact"></span>
+    <span class="cfg-mini-edge e-loop-news"></span>
+    <span class="cfg-mini-edge e-loop-join"></span>
+    <a class="cfg-mini-block b-main b-entry" href="#top" title="entry"><span>entry</span></a>
+    <a class="cfg-mini-block b-main b-research" href="#research" title="loc_research"><span>research</span></a>
+    <a class="cfg-mini-block b-case b-fuzzing" href="#research" title="loc_fuzzing"><span>fuzz</span></a>
+    <a class="cfg-mini-block b-case b-analysis" href="#research" title="loc_program_analysis"><span>pa</span></a>
+    <a class="cfg-mini-block b-case b-meta" href="#research" title="loc_metascience"><span>meta</span></a>
+    <a class="cfg-mini-block b-main b-pubs" href="#publications" title="loc_pubs"><span>pubs</span></a>
+    <a class="cfg-mini-block b-main b-team" href="#people" title="loc_team"><span>team</span></a>
+    <a class="cfg-mini-block b-main b-news" href="#news" title="loc_news"><span>news</span></a>
+    <a class="cfg-mini-block b-main b-join" href="#join" title="loc_join"><span>join</span></a>
+    <a class="cfg-mini-block b-contact" href="#contact" title="loc_contact" aria-label="loc_contact"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<main id="site-content">
+<div class="cfg-backedge" aria-hidden="true">
+  <span class="be-rail"></span>
+  <span class="be-stem"></span>
+  <span class="be-out"></span>
+  <span class="be-top"></span>
+  <span class="be-in"></span>
+</div>
+<div class="cfg-backedge cfg-backedge--r" aria-hidden="true">
+  <span class="be-rail"></span>
+  <span class="be-stem"></span>
+  <span class="be-out"></span>
+  <span class="be-top"></span>
+  <span class="be-in"></span>
+</div>
+<!-- HERO — navy background ── -->
+<section class="hero" id="top" data-block-label="entry: softsec_lab">
+  <div class="cfg-hd">
+    <span class="cfg-dot entry"></span>
+    <span class="cfg-addr">0x00401000</span>
+    <span class="cfg-label">entry</span>
+    <span class="cfg-flags">function · 0 xrefs</span>
+  </div>
+  <div class="wrap">
+    <h1>SoftSec Lab<br><span>Software Security Research</span></h1>
+    <hr class="hero-rule">
+    <p class="hero-desc">
+      We study how <strong>software fails</strong> and build systems that find, explain, and prevent vulnerabilities. Our work centers on fuzzing, program analysis, binary security, and the empirical foundations of security research.
+    </p>
+    <p class="hero-desc">
+      We are a <a href="https://cispa.de/de/research/groups/schloegel" style="color:rgba(255,255,255,0.75);">research group</a> within the <strong><a href="https://cispa.de" style="color:rgba(255,255,255,0.75);">CISPA Helmholtz Center for Information Security</a></strong> located in Saarbrücken, Germany.
+    </p>
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_research</pre>
+  </div>
+</section>
+
+<div class="cfg-edge"><span class="spine"></span><span class="head"></span></div>
+
+<!-- RESEARCH ── -->
+<section class="section" id="research" data-block-label="basic_block_01: research">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x004012a0</span>
+    <span class="cfg-label">loc_research</span>
+    <span class="cfg-flags">3 directions</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">What we work on</p>
+    <h2 class="section-heading">Research Directions</h2>
+    <p class="research-lead">Our research focuses on three connected areas:</p>
+    <div class="tracks">
+      <div class="track" data-case="0">
+        <div class="track-num">1</div>
+        <div>
+          <h3>Fuzzing &amp; Automated Vulnerability Discovery</h3>
+          <p>New fuzzing strategies for hard targets, including browsers, closed-source binaries, network services, or web applications. We rethink how inputs are generated and mutated. Our goal? To find bugs before attackers do.</p>
+          <div class="track-tags">
+            <a class="track-tag" href="#blazytko2019grimoire">Grimoire</a>
+            <a class="track-tag" href="#bars2023fuzztruction">Fuzztruction</a>
+            <a class="track-tag" href="#bars2024fuzztructionnet">No Peer, no Cry</a>
+            <a class="track-tag" href="#gueler2024atropos">Atropos</a>
+            <a class="track-tag" href="#bars2025sbxbrk">SbxBrk</a>
+            <a class="track-tag" href="#schiller2025fuzzerrestarts">Restarts</a>
+            <a class="track-tag" href="#schweins2025vmigen">VMIGen</a>
+          </div>
+        </div>
+      </div>
+      <div class="track" data-case="1">
+        <div class="track-num">2</div>
+        <div>
+          <h3>Program Analysis &amp; Binary Security</h3>
+          <p>We develop program analysis techniques that reason about software, its behavior, and security properties — from source code to stripped binaries. Our work spans understanding what code does, why it fails, and what an attacker can do with that failure.</p>
+          <div class="track-tags">
+            <a class="track-tag" href="#blazytko2020aurora">Aurora</a>
+            <a class="track-tag" href="#schloegel2021sgc">SGC</a>
+            <a class="track-tag" href="#schloegel2022loki">Loki</a>
+            <a class="track-tag" href="#zeng2026ropbot">ropbot</a>
+          </div>
+        </div>
+      </div>
+      <div class="track" data-case="2">
+        <div class="track-num">3</div>
+        <div>
+          <h3>Empirical Security Science</h3>
+          <p>Good security research requires more than good tools. We take a meta-scientific view and examine whether empirical evaluations can be trusted, how we determine the impact of our research in practice, and reflect on our vulnerability disclosure practices.</p>
+          <div class="track-tags">
+            <a class="track-tag" href="#schloegel2024sokfuzzevals">SoK: Fuzzer Evals</a>
+            <a class="track-tag" href="#schloegel2025cveanalysis">CVE Study</a>
+            <a class="track-tag" href="#schiller2026sokfuzzerevolution">AFL++ SoK</a>
+            <a class="track-tag" href="#tay2026responsibledisclosure">Responsible Disclosure</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">jmp     ds:jpt_directions[rax*8]</pre>
+  </div>
+</section>
+
+<div class="cfg-switch" aria-hidden="true">
+  <span class="stem"></span>
+  <span class="bar"></span>
+  <span class="drop drop-a"></span>
+  <span class="drop drop-b"></span>
+  <span class="drop drop-c"></span>
+</div>
+
+<div class="research-cases" aria-hidden="true">
+  <div class="research-case" data-case="loc_fuzzing">
+    <h3>Fuzzing &amp; Automated Vulnerability Discovery</h3>
+    <p>New fuzzing strategies for hard targets, including browsers, closed-source binaries, network services, or web applications. We rethink how inputs are generated and mutated. Our goal? To find bugs before attackers do.</p>
+    <div class="track-tags">
+      <a class="track-tag" href="#blazytko2019grimoire">Grimoire</a>
+      <a class="track-tag" href="#bars2023fuzztruction">Fuzztruction</a>
+      <a class="track-tag" href="#bars2024fuzztructionnet">No Peer, no Cry</a>
+      <a class="track-tag" href="#gueler2024atropos">Atropos</a>
+      <a class="track-tag" href="#bars2025sbxbrk">SbxBrk</a>
+      <a class="track-tag" href="#schiller2025fuzzerrestarts">Restarts</a>
+      <a class="track-tag" href="#schweins2025vmigen">VMIGen</a>
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_pubs</pre>
+  </div>
+  <div class="research-case" data-case="loc_program_analysis">
+    <h3>Program Analysis &amp; Binary Security</h3>
+    <p>We develop program analysis techniques that reason about software, its behavior, and security properties — from source code to stripped binaries. Our work spans understanding what code does, why it fails, and what an attacker can do with that failure.</p>
+    <div class="track-tags">
+      <a class="track-tag" href="#blazytko2020aurora">Aurora</a>
+      <a class="track-tag" href="#schloegel2021sgc">SGC</a>
+      <a class="track-tag" href="#schloegel2022loki">Loki</a>
+      <a class="track-tag" href="#zeng2026ropbot">ropbot</a>
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_pubs</pre>
+  </div>
+  <div class="research-case" data-case="loc_metascience">
+    <h3>Empirical Security Science</h3>
+    <p>Good security research requires more than good tools. We take a meta-scientific view and examine whether empirical evaluations can be trusted, how we determine the impact of our research in practice, and reflect on our vulnerability disclosure practices.</p>
+    <div class="track-tags">
+      <a class="track-tag" href="#schloegel2024sokfuzzevals">SoK: Fuzzer Evals</a>
+      <a class="track-tag" href="#schloegel2025cveanalysis">CVE Study</a>
+      <a class="track-tag" href="#schiller2026sokfuzzerevolution">AFL++ SoK</a>
+      <a class="track-tag" href="#tay2026responsibledisclosure">Responsible Disclosure</a>
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_pubs</pre>
+  </div>
+</div>
+
+<div class="cfg-join" aria-hidden="true">
+  <span class="drop drop-a"></span>
+  <span class="drop drop-b"></span>
+  <span class="drop drop-c"></span>
+  <span class="bar"></span>
+  <span class="stem"></span>
+</div>
+
+<div class="cfg-edge"><span class="spine"></span><span class="head"></span></div>
+
+<!-- PUBLICATIONS ── -->
+<section class="section" id="publications" data-block-label="basic_block_02: publications">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x00401860</span>
+    <span class="cfg-label">loc_pubs</span>
+    <span class="cfg-flags">loop header · 2 xrefs</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">Our work</p>
+    <h2 class="section-heading">Publications</h2>
+    <div class="pub-filter" id="pub-filter" hidden>
+      <div class="pub-filter-line">
+        Showing <strong id="pub-filter-name"></strong>
+        <button type="button" id="pub-filter-clear" aria-label="Clear publication filter">x</button>
+      </div>
+      <div class="pub-filter-count" id="pub-filter-count"></div>
+    </div>
+        <details class="pub-year" open>
+      <summary class="pub-yr-summary">2026</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="chen2026sokdlvs" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/chen2026sokdlvs.pdf">SoK: History Doesn't Repeat Itself, but Android Design-Level Vulnerabilities Rhyme in OpenHarmony</a></div>
+          <div class="pa">Hongkai Chen, Yuqing Yang, Chao Wang, Arpit Nandi, <strong>Moritz Schloegel</strong>, Tiffany Bao, Ruoyu Wang, Adam Doupé, Zhiqiang Lin, Yan Shoshitaishvili</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2026</button>
+        </div>
+        <div class="pub-entry" id="mattei2026soksymbolicexecution" data-filter-keys="v:acm-secdev a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/mattei2026soksymbolicexecution.pdf">SoK: A Modularized Framework for Symbolic Execution and Application for Usable Tool Design</a></div>
+          <div class="pa">James Mattei, Andrew Lin, Jasper Geer, Jie Hu, <strong>Moritz Schloegel</strong>, Tiffany Bao, Daniel Votipka</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-secdev" data-filter-name="ACM SecDev">ACM SecDev 2026</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="schiller2026sokfuzzerevolution" data-filter-keys="v:ieee-eurosandp">
+          <div class="pt"><a href="https://mschloegel.me/paper/schiller2026sokfuzzerevolution.pdf">SoK: A Systematic Review of Integration and Reproducibility of Fuzzing Research into AFL++</a></div>
+          <div class="pa">Nico Schiller, Nils Bars, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-eurosandp" data-filter-name="IEEE EuroS&amp;P">IEEE EuroS&amp;P 2026</button>
+        </div>
+        <div class="pub-entry" id="leonelli2026themis" data-filter-keys="v:ieee-eurosandp">
+          <div class="pt">THEMIS: Context-Aware Grey-box Fuzzing for WordPress Plugins</div>
+          <div class="pa">Matteo Leonelli, <strong>David Dewes</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-eurosandp" data-filter-name="IEEE EuroS&amp;P">IEEE EuroS&amp;P 2026</button>
+        </div>
+        <div class="pub-entry" id="tay2026responsibledisclosure" data-filter-keys="v:ieee-sandp a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/tay2026responsibledisclosure.pdf">Responsible Disclosure is a Two-Way Street: Empirically Measuring the Responsible Disclosure Contract in the Firmware Ecosystem</a></div>
+          <div class="pa">Hui Jun Tay, Souradip Nath, Arvind S Raj, Abhay Bhat, Ishan Bansal, Audrey Dutcher, <strong>Moritz Schloegel</strong>, Adam Doupé, Tiffany Bao, Yan Shoshitaishvili, Ruoyu Wang</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-sandp" data-filter-name="IEEE S&amp;P">IEEE S&amp;P 2026</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="zeng2026ropbot" data-filter-keys="v:ndss">
+          <div class="pt"><a href="https://mschloegel.me/paper/zeng2026ropbot.pdf">ropbot: Reimaging Code Reuse Attack Synthesis</a></div>
+          <div class="pa">Kyle Zeng, <strong>Moritz Schloegel</strong>, Christopher Salls, Adam Doupé, Ruoyu Wang, Yan Shoshitaishvili, Tiffany Bao</div>
+          <button class="venue-tag" type="button" data-filter="v:ndss" data-filter-name="NDSS">NDSS 2026</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year" open>
+      <summary class="pub-yr-summary">2025</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="schweins2025vmigen" data-filter-keys="v:acsac">
+          <div class="pt"><a href="https://mschloegel.me/paper/schweins2025vmigen.pdf">VMIGen: Utilizing Virtual Machine Introspection for Fuzzing Complex Closed-Source Targets</a></div>
+          <div class="pa">Florian Schweins, <strong>Moritz Schloegel</strong>, Moritz Bley, Nico Schiller, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acsac" data-filter-name="ACSAC">ACSAC 2025</button>
+        </div>
+        <div class="pub-entry" id="bars2025sbxbrk" data-filter-keys="v:acm-ccs a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/bars2025sbxbrk.pdf">Empirical Security Analysis of Software-based Fault Isolation through Controlled Fault Injection</a></div>
+          <div class="pa">Nils Bars, Lukas Bernhard, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-ccs" data-filter-name="ACM CCS">ACM CCS 2025</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="bley2025pemu" data-filter-keys="v:acm-ccs">
+          <div class="pt"><a href="https://mschloegel.me/paper/bley2025pemu.pdf">Protocol-Aware Firmware Rehosting for Effective Fuzzing of Embedded Network Stacks</a></div>
+          <div class="pa">Moritz Bley, Tobias Scharnowski, Simon Wörner, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-ccs" data-filter-name="ACM CCS">ACM CCS 2025</button>
+        </div>
+        <div class="pub-entry" id="schloegel2025cveanalysis" data-filter-keys="v:usenix-security a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/schloegel2025cveanalysis.pdf">Confusing Value with Enumeration: Studying the Use of CVEs in Academia</a></div>
+          <div class="pa"><strong>Moritz Schloegel</strong>, Daniel Klischies, Simon Koch, David Klein, Lukas Gerlach, Malte Wessels, Leon Trampert, Martin Johns, Mathy Vanhoef, Michael Schwarz, Thorsten Holz, Jo Van Bulck</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2025</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="momeu2025iubik" data-filter-keys="v:ieee-sandp">
+          <div class="pt">IUBIK: Isolating User Bytes in Commodity Operating System Kernels via Memory Tagging Extensions</div>
+          <div class="pa">Marius Momeu, Alexander J Gaidis, <strong>Jasper von der Heidt</strong>, Vasileios P Kemerlis</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-sandp" data-filter-name="IEEE S&amp;P">IEEE S&amp;P 2025</button>
+        </div>
+        <div class="pub-entry" id="willbold2025radsim" data-filter-keys="v:ieee-sandp">
+          <div class="pt"><a href="https://mschloegel.me/paper/willbold2025radsim.pdf">Space RadSim: Binary-Agnostic Fault Injection to Evaluate Cosmic Radiation Impact on Exploit Mitigation Techniques in Space</a></div>
+          <div class="pa">Johannes Willbold, Tobias Cloosters, Simon Wörner, Felix Buchmann, <strong>Moritz Schloegel</strong>, Lucas Davi, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-sandp" data-filter-name="IEEE S&amp;P">IEEE S&amp;P 2025</button>
+        </div>
+        <div class="pub-entry" id="schiller2025fuzzerrestarts" data-filter-keys="v:acm-tosem">
+          <div class="pt"><a href="https://mschloegel.me/paper/schiller2025fuzzerrestarts.pdf">Novelty Not Found: Adaptive Fuzzer Restarts to Improve Input Space Coverage</a></div>
+          <div class="pa">Nico Schiller, Xinyi Xu, Lukas Bernhard, Nils Bars, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-tosem" data-filter-name="ACM TOSEM">ACM TOSEM 2025</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2024</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="bernhard2024darthshader" data-filter-keys="v:acm-ccs a:distinguished-artifact-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/bernhard2024darthshader.pdf">DarthShader: Fuzzing WebGPU Shader Translators &amp; Compilers</a></div>
+          <div class="pa">Lukas Bernhard, Nico Schiller, <strong>Moritz Schloegel</strong>, Nils Bars, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-ccs" data-filter-name="ACM CCS">ACM CCS 2024</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-artifact-award" data-filter-name="Distinguished Artifact Award">Distinguished Artifact Award</button>
+        </div>
+        <div class="pub-entry" id="bars2024fuzztructionnet" data-filter-keys="v:acm-ccs">
+          <div class="pt"><a href="https://mschloegel.me/paper/bars2024fuzztructionnet.pdf">No Peer, no Cry: Network Application Fuzzing via Fault Injection</a></div>
+          <div class="pa">Nils Bars, <strong>Moritz Schloegel</strong>, Nico Schiller, Lukas Bernhard, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-ccs" data-filter-name="ACM CCS">ACM CCS 2024</button>
+        </div>
+        <div class="pub-entry" id="schilling2024bintsan" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/schilling2024bintsan.pdf">A Binary-level Thread Sanitizer or Why Sanitizing on the Binary Level is Hard</a></div>
+          <div class="pa">Joschua Schilling, Andreas Wendler, Philipp Görz, Nils Bars, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2024</button>
+        </div>
+        <div class="pub-entry" id="gueler2024atropos" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/gueler2024atropos.pdf">Atropos: Effective Fuzzing of Web Applications for Server-Side Vulnerabilities</a></div>
+          <div class="pa">Emre Güler, Sergej Schumilo, <strong>Moritz Schloegel</strong>, Nils Bars, Philipp Görz, Xinyi Xu, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2024</button>
+        </div>
+        <div class="pub-entry" id="weissberg2024soktargetselection" data-filter-keys="v:acm-asiaccs">
+          <div class="pt"><a href="https://mschloegel.me/paper/weissberg2024soktargetselection.pdf">SoK: Where to Fuzz? Assessing Target Selection Methods in Directed Fuzzing</a></div>
+          <div class="pa">Felix Weißberg, Jonas Möller, Tom Ganz, Erik Imgrund, Lukas Pirch, Lukas Seidel, <strong>Moritz Schloegel</strong>, Thorsten Eisenhofer, Konrad Rieck</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-asiaccs" data-filter-name="ACM AsiaCCS">ACM AsiaCCS 2024</button>
+        </div>
+        <div class="pub-entry" id="falco2024spacecybersecurity" data-filter-keys="v:ieee-smc-it">
+          <div class="pt">Minimum Requirements for Space System Cybersecurity — Ensuring Cyber Access to Space</div>
+          <div class="pa">Gregory Falco, others</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-smc-it" data-filter-name="IEEE SMC-IT">IEEE SMC-IT 2024</button>
+        </div>
+        <div class="pub-entry" id="willbold2024vsaster" data-filter-keys="v:acm-wisec">
+          <div class="pt"><a href="https://mschloegel.me/paper/willbold2024vsaster.pdf">VSAsTer: Uncovering Inherent Security Issues in Current VSAT System Practices</a></div>
+          <div class="pa">Johannes Willbold, <strong>Moritz Schloegel</strong>, Robin Bisping, Martin Strohmeier, Thorsten Holz, Vincent Lenders</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-wisec" data-filter-name="ACM WiSec">ACM WiSec 2024</button>
+        </div>
+        <div class="pub-entry" id="schloegel2024sokfuzzevals" data-filter-keys="v:ieee-sandp a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/schloegel2024sokfuzzevals.pdf">SoK: Prudent Evaluation Practices for Fuzzing</a></div>
+          <div class="pa"><strong>Moritz Schloegel</strong>, Nils Bars, Nico Schiller, Lukas Bernhard, Tobias Scharnowski, Addison Crump, Arash Ale Ebrahim, Nicolai Bissantz, Marius Muench, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-sandp" data-filter-name="IEEE S&amp;P">IEEE S&amp;P 2024</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="willbold2024satellitefuzzing" data-filter-keys="v:ieee-aerospace">
+          <div class="pt"><a href="https://mschloegel.me/paper/willbold2024satellitefuzzing.pdf">Scaling Software Security Analysis to Satellites: Automated Fuzz Testing and Its Unique Challenges</a></div>
+          <div class="pa">Johannes Willbold, <strong>Moritz Schloegel</strong>, Florian Göhler, Tobias Scharnowski, Nils Bars, Simon Wörner, Nico Schiller, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-aerospace" data-filter-name="IEEE Aerospace">IEEE Aerospace 2024</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2023</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="bars2023fuzztruction" data-filter-keys="v:usenix-security a:distinguished-paper-award t:internet-defense-prize-runner-up">
+          <div class="pt"><a href="https://mschloegel.me/paper/bars2023fuzztruction.pdf">Fuzztruction: Using Fault Injection-based Fuzzing to Leverage Implicit Domain Knowledge</a></div>
+          <div class="pa">Nils Bars, <strong>Moritz Schloegel</strong>, Tobias Scharnowski, Nico Schiller, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2023</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+          <button class="trophy-tag" type="button" data-filter="t:internet-defense-prize-runner-up" data-filter-name="Internet Defense Prize Runner-up">Internet Defense Prize Runner-up</button>
+        </div>
+        <div class="pub-entry" id="scharnowski2023hoedur" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/scharnowski2023hoedur.pdf">Hoedur: Embedded Firmware Fuzzing using Multi-Stream Inputs</a></div>
+          <div class="pa">Tobias Scharnowski, Simon Wörner, Felix Buchmann, Nils Bars, <strong>Moritz Schloegel</strong>, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2023</button>
+        </div>
+        <div class="pub-entry" id="klischies2023undefinedbehaviour" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/klischies2023undefinedbehaviour.pdf">Instructions Unclear: Undefined Behavior in Cellular Network Specifications</a></div>
+          <div class="pa">Daniel Klischies, <strong>Moritz Schloegel</strong>, Tobias Scharnowski, Mikhail Bogodukhov, David Rupprecht, Veelasha Moonsamy</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2023</button>
+        </div>
+        <div class="pub-entry" id="willbold2023spaceodyssey" data-filter-keys="v:ieee-sandp a:distinguished-paper-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/willbold2023spaceodyssey.pdf">Space Odyssey: An Experimental Software Security Analysis of Satellites</a></div>
+          <div class="pa">Johannes Willbold, <strong>Moritz Schloegel</strong>, Manuel Vögele, Maximilian Gerhardt, Thorsten Holz, Ali Abbasi</div>
+          <button class="venue-tag" type="button" data-filter="v:ieee-sandp" data-filter-name="IEEE S&amp;P">IEEE S&amp;P 2023</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-paper-award" data-filter-name="Distinguished Paper Award">Distinguished Paper Award</button>
+        </div>
+        <div class="pub-entry" id="schiller2023dronesecurity" data-filter-keys="v:ndss">
+          <div class="pt"><a href="https://mschloegel.me/paper/schiller2023dronesecurity.pdf">Drone Security and the Mysterious Case of DJI's DroneID</a></div>
+          <div class="pa">Nico Schiller, Merlin Chlosta, <strong>Moritz Schloegel</strong>, Nils Bars, Thorsten Eisenhofer, Tobias Scharnowski, Felix Domke, Lea Schönherr, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:ndss" data-filter-name="NDSS">NDSS 2023</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2022</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="bernhard2022jitpicking" data-filter-keys="v:acm-ccs">
+          <div class="pt"><a href="https://mschloegel.me/paper/bernhard2022jitpicking.pdf">Jit-Picking: Differential Fuzzing of JavaScript Engines</a></div>
+          <div class="pa">Lukas Bernhard, Tobias Scharnowski, <strong>Moritz Schloegel</strong>, Tim Blazytko, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:acm-ccs" data-filter-name="ACM CCS">ACM CCS 2022</button>
+        </div>
+        <div class="pub-entry" id="scharnowski2022fuzzware" data-filter-keys="v:usenix-security a:distinguished-artifact-award">
+          <div class="pt"><a href="https://mschloegel.me/paper/scharnowski2022fuzzware.pdf">Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing</a></div>
+          <div class="pa">Tobias Scharnowski, Nils Bars, <strong>Moritz Schloegel</strong>, Eric Gustafson, Marius Muench, Giovanni Vigna, Christopher Kruegel, Thorsten Holz, Ali Abbasi</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2022</button>
+          <button class="award-tag" type="button" data-filter="a:distinguished-artifact-award" data-filter-name="Distinguished Artifact Award">Distinguished Artifact Award</button>
+        </div>
+        <div class="pub-entry" id="schloegel2022loki" data-filter-keys="v:usenix-security t:csaw-applied-research-competition-3rd-place">
+          <div class="pt"><a href="https://mschloegel.me/paper/schloegel2022loki.pdf">Loki: Hardening Code Obfuscation against Automated Attacks</a></div>
+          <div class="pa"><strong>Moritz Schloegel</strong>, Tim Blazytko, Moritz Contag, Cornelius Aschermann, Julius Basler, Thorsten Holz, Ali Abbasi</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2022</button>
+          <button class="trophy-tag" type="button" data-filter="t:csaw-applied-research-competition-3rd-place" data-filter-name="CSAW Applied Research Competition — 3rd Place">CSAW Applied Research Competition — 3rd Place</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2021</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="schloegel2021sgc" data-filter-keys="v:esorics">
+          <div class="pt"><a href="https://mschloegel.me/paper/schloegel2021sgc.pdf">Towards Automating Code-Reuse Attacks Using Synthesized Gadget Chains</a></div>
+          <div class="pa"><strong>Moritz Schloegel</strong>, Tim Blazytko, Julius Basler, Fabian Hemmer, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:esorics" data-filter-name="ESORICS">ESORICS 2021</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2020</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="blazytko2020aurora" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/blazytko2020aurora.pdf">Aurora: Statistical Crash Analysis for Automated Root Cause Explanation</a></div>
+          <div class="pa">Tim Blazytko, <strong>Moritz Schloegel</strong>, Cornelius Aschermann, Ali Abbasi, Joel Frank, Simon Wörner, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2020</button>
+        </div>
+      </div>
+    </details>
+
+    <details class="pub-year">
+      <summary class="pub-yr-summary">2019</summary>
+      <div class="pub-yr-entries">
+        <div class="pub-entry" id="blazytko2019grimoire" data-filter-keys="v:usenix-security">
+          <div class="pt"><a href="https://mschloegel.me/paper/blazytko2019grimoire.pdf">Grimoire: Synthesizing Structure while Fuzzing</a></div>
+          <div class="pa">Tim Blazytko, Cornelius Aschermann, <strong>Moritz Schloegel</strong>, Ali Abbasi, Sergej Schumilo, Simon Wörner, Thorsten Holz</div>
+          <button class="venue-tag" type="button" data-filter="v:usenix-security" data-filter-name="USENIX Security">USENIX Security 2019</button>
+        </div>
+      </div>
+    </details>
+
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_team</pre>
+  </div>
+</section>
+
+<div class="cfg-edge"><span class="spine"></span><span class="head"></span></div>
+
+<!-- PEOPLE ── -->
+<section class="section" id="people" data-block-label="basic_block_03: people">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x00401b40</span>
+    <span class="cfg-label">loc_team</span>
+    <span class="cfg-flags">struct team[]</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">Who we are</p>
+    <h2 class="section-heading">Team</h2>
+    <div class="people-grid">
+      <div class="person">
+        <a href="https://mschloegel.me" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/moritz-schloegel.jpg" alt="Moritz Schloegel"></a>
+        <div class="pname"><a href="https://mschloegel.me">Moritz Schloegel</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c01mosc">Faculty · PI</a></div>
+      </div>
+      <div class="person">
+        <a href="https://cispa.de/en/people/c01javo" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/jasper-von-der-heidt.jpg" alt="Jasper von der Heidt"></a>
+        <div class="pname"><a href="https://cispa.de/en/people/c01javo">Jasper von der Heidt</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c01javo">PhD Student</a></div>
+      </div>
+      <div class="person">
+        <a href="https://cispa.de/de/people/c01eyis" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/eyad-issa.jpg" alt="Eyad Issa"></a>
+        <div class="pname"><a href="https://cispa.de/de/people/c01eyis">Eyad Issa</a></div>
+        <div class="prole"><a href="https://cispa.de/de/people/c01eyis">Intern</a></div>
+      </div>
+      <div class="person">
+        <a href="https://cispa.de/en/people/c03zhzh" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="Zhuohao Zhang" style="background:#e2dfd9;"></a>
+        <div class="pname"><a href="https://cispa.de/en/people/c03zhzh">Zhuohao Zhang</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c03zhzh">Intern</a></div>
+      </div>
+      <div class="person">
+        <a href="https://david-dewes.de" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="David Dewes" style="background:#e2dfd9;"></a>
+        <div class="pname"><a href="https://david-dewes.de">David Dewes</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c01dade">Research Assistant</a></div>
+      </div>
+      <div class="person">
+        <a href="https://cispa.de/en/people/c01keth" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="Kevin Theobald" style="background:#e2dfd9;"></a>
+        <div class="pname"><a href="https://cispa.de/en/people/c01keth">Kevin Theobald</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c01keth">Research Assistant</a></div>
+      </div>
+
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">jmp     loc_news</pre>
+  </div>
+</section>
+
+<div class="cfg-edge"><span class="spine"></span><span class="head"></span></div>
+
+<!-- NEWS ── -->
+<section class="section" id="news" data-block-label="basic_block_04: news">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x00401cc0</span>
+    <span class="cfg-label">loc_news</span>
+    <span class="cfg-flags">latest</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">Latest</p>
+    <h2 class="section-heading">News</h2>
+    <div class="news-entries">
+      <div class="news-entry">
+        <span class="news-date">Jul 2026</span>
+        <span class="news-text">"SoK: A Modularized Framework for Symbolic Execution and Application for Usable Tool Design" receives a <span class="award">Distinguished Paper Award</span> at <strong>ACM SecDev 2026</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">May 2026</span>
+        <span class="news-text">"Responsible Disclosure is a Two-Way Street" receives a <span class="award">Distinguished Paper Award</span> at <strong>IEEE S&amp;P 2026</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">Nov 2025</span>
+        <span class="news-text">"Empirical Security Analysis of Software-based Fault Isolation" wins a <span class="award">Distinguished Paper Award</span> at <strong>ACM CCS 2025</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">Aug 2025</span>
+        <span class="news-text">"Confusing Value with Enumeration: Studying the Use of CVEs in Academia" wins a <span class="award">Distinguished Paper Award</span> at <strong>USENIX Security 2025</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">Aug 2024</span>
+        <span class="news-text">DarthShader receives a <span class="award">Distinguished Artifact Award</span> at <strong>ACM CCS 2024</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">May 2024</span>
+        <span class="news-text">"SoK: Prudent Evaluation Practices for Fuzzing" receives a <span class="award">Distinguished Paper Award</span> at <strong>IEEE S&amp;P 2024</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">Aug 2023</span>
+        <span class="news-text">Fuzztruction wins a <span class="award">Distinguished Paper Award</span> and the <span class="award">Internet Defense Prize Runner-up</span> at <strong>USENIX Security 2023</strong>.</span>
+      </div>
+      <div class="news-entry">
+        <span class="news-date">May 2023</span>
+        <span class="news-text">Space Odyssey wins a <span class="award">Distinguished Paper Award</span> at <strong>IEEE S&amp;P 2023</strong>.</span>
+      </div>
+
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">cmp     dword ptr [news_idx], news_count
+jne     loc_pubs
+jmp     loc_join</pre>
+  </div>
+</section>
+
+<div class="cfg-edge e-false"><span class="spine"></span><span class="head"></span></div>
+
+<!-- OPEN POSITIONS ── -->
+<section class="section" id="join" data-block-label="basic_block_05: join">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x00401e20</span>
+    <span class="cfg-label">loc_join</span>
+    <span class="cfg-flags">if (interested)</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">Join the group</p>
+    <h2 class="section-heading">Open Positions</h2>
+    <p class="join-lead">
+    Interested in joining our lab as a PhD student or Postdoc? While we have no formally advertised positions at the moment, we are always interested in hearing from strong candidates. Ideally, you have strong grades and a background in low-level security (for example, experience with reverse engineering or exploitation) or a strong track record in the field of systems security.</br></br>
+
+    We also offer a broad range of internship opportunities.</br></br>
+
+    If you are interested in joining us, please reach out with a brief introduction and your CV to <a href="mailto:moritz.schloegel@cispa.de">moritz.schloegel@cispa.de</a>.
+    </p>
+    <pre class="cfg-tail" aria-hidden="true">test    interested, interested
+jne     loc_research
+jmp     loc_contact</pre>
+  </div>
+</section>
+
+<div class="cfg-edge e-false"><span class="spine"></span><span class="head"></span></div>
+
+<!-- CONTACT ── -->
+<section class="section" id="contact" data-block-label="return: contact">
+  <div class="cfg-hd">
+    <span class="cfg-dot"></span>
+    <span class="cfg-addr">0x00401ee0</span>
+    <span class="cfg-label">loc_contact</span>
+  </div>
+  <div class="wrap">
+    <p class="section-eyebrow">Get in touch</p>
+    <h2 class="section-heading">Contact</h2>
+    <div class="contact-grid">
+      <div class="contact-block">
+        <h3>Email</h3>
+        <p>Moritz Schloegel</p>
+        <a href="mailto:moritz.schloegel@cispa.de">moritz.schloegel@cispa.de</a>
+      </div>
+      <div class="contact-block">
+        <h3>Address</h3>
+        <p>CISPA Helmholtz Center for Information Security</p>
+        <p>Stuhlsatzenhaus 5</p>
+        <p>66123 Saarbrücken, Germany</p>
+      </div>
+    </div>
+    <pre class="cfg-tail" aria-hidden="true">ret</pre>
+  </div>
+</section>
+</main>
+
+<section class="hex-view" aria-label="Hex representation">
+  <pre id="hex-output"></pre>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span style="display:flex;align-items:center;gap:8px;"><img src="softsec_logo.svg" alt="" style="width:18px;height:18px;filter:brightness(0) invert(1);opacity:0.6;"><strong style="color:rgba(255,255,255,0.75);font-weight:600;">SoftSec Lab</strong> · <a href="https://cispa.de">CISPA Helmholtz Center for Information Security</a></span>
+    <span><a href="imprint.html">Imprint</a> · <a href="privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const icon = toggle.querySelector('i');
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    icon.className = 'fa-solid fa-sun';
+  }
+  toggle.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (dark) {
+      document.documentElement.removeAttribute('data-theme');
+      icon.className = 'fa-solid fa-moon';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      icon.className = 'fa-solid fa-sun';
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  function openPubAnchor(hash) {
+    if (!hash) return;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return;
+    const details = el.closest('details');
+    if (details) details.open = true;
+  }
+  openPubAnchor(location.hash);
+  window.addEventListener('hashchange', () => openPubAnchor(location.hash));
+
+  const pubEntries = Array.from(document.querySelectorAll('.pub-entry'));
+  const pubYears = Array.from(document.querySelectorAll('details.pub-year'));
+  const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+  const pubFilter = document.getElementById('pub-filter');
+  const pubFilterName = document.getElementById('pub-filter-name');
+  const pubFilterCount = document.getElementById('pub-filter-count');
+  const pubFilterClear = document.getElementById('pub-filter-clear');
+  let activeFilter = '';
+  pubYears.forEach((year) => {
+    year.dataset.defaultOpen = String(year.open);
+  });
+
+  function clearFilter() {
+    pubEntries.forEach((entry) => {
+      entry.hidden = false;
+    });
+    pubYears.forEach((year) => {
+      year.hidden = false;
+      year.open = year.dataset.defaultOpen === 'true';
+    });
+    filterButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', 'false');
+    });
+    activeFilter = '';
+    pubFilter.hidden = true;
+    pubFilterName.textContent = '';
+    pubFilterCount.textContent = '';
+  }
+
+  function applyFilter(key, name) {
+    let visibleCount = 0;
+    pubEntries.forEach((entry) => {
+      const visible = (entry.dataset.filterKeys || '').split(' ').includes(key);
+      entry.hidden = !visible;
+      if (visible) visibleCount += 1;
+    });
+    pubYears.forEach((year) => {
+      const hasVisibleEntry = Boolean(year.querySelector('.pub-entry:not([hidden])'));
+      year.hidden = !hasVisibleEntry;
+      year.open = hasVisibleEntry;
+    });
+    filterButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.filter === key));
+    });
+    activeFilter = key;
+    pubFilterName.textContent = name;
+    pubFilterCount.textContent = `${visibleCount} publication${visibleCount === 1 ? '' : 's'}`;
+    pubFilter.hidden = false;
+    document.getElementById('publications').scrollIntoView();
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-filter]');
+    if (!button) return;
+    if (button.dataset.filter === activeFilter) {
+      clearFilter();
+      return;
+    }
+    applyFilter(button.dataset.filter, button.dataset.filterName);
+  });
+  pubFilterClear.addEventListener('click', clearFilter);
+
+  const viewButtons = Array.from(document.querySelectorAll('[data-view-mode]'));
+  const siteContent = document.getElementById('site-content');
+  const footerText = document.querySelector('footer');
+  const hexOutput = document.getElementById('hex-output');
+
+  function textToHexDump(text) {
+    const bytes = new TextEncoder().encode(text.replace(/\s+/g, ' ').trim());
+    const rows = [];
+    for (let i = 0; i < bytes.length; i += 16) {
+      const chunk = bytes.slice(i, i + 16);
+      const offset = i.toString(16).padStart(8, '0');
+      const hex = Array.from(chunk, (byte) => byte.toString(16).padStart(2, '0')).join(' ').padEnd(47, ' ');
+      const ascii = Array.from(chunk, (byte) => byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : '.').join('');
+      rows.push(`${offset}  ${hex}  |${ascii}|`);
+    }
+    return rows.join('\n');
+  }
+
+  function getLinearPageText() {
+    const contentClone = siteContent.cloneNode(true);
+    contentClone.querySelectorAll('.cfg-hd, .cfg-edge, .cfg-switch, .cfg-join, .cfg-backedge, .cfg-tail, .research-cases').forEach((el) => el.remove());
+    const footerClone = footerText.cloneNode(true);
+    const parts = [contentClone, footerClone].map((node) => node.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    return parts.join('\n');
+  }
+
+  function buildHexView() {
+    hexOutput.textContent = textToHexDump(getLinearPageText());
+  }
+
+  function setViewMode(mode) {
+    const selected = ['graph', 'linear', 'hex'].includes(mode) ? mode : 'linear';
+    if (selected === 'linear') {
+      document.documentElement.removeAttribute('data-view');
+    } else {
+      document.documentElement.setAttribute('data-view', selected);
+    }
+    viewButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.viewMode === selected));
+    });
+    if (selected === 'hex') buildHexView();
+    if (selected === 'graph') scheduleBackEdge();
+    localStorage.setItem('viewMode', selected);
+  }
+
+  // Back-edge (loop) connector: news (latch) -> publications (loop header).
+  // Pinned to the live block positions; recomputed on view switch, resize,
+  // image load, and publication-year toggles.
+  const backEdgeLeft = document.querySelector('.cfg-backedge:not(.cfg-backedge--r)');
+  const backEdgeRight = document.querySelector('.cfg-backedge--r');
+  function placeBackEdge(el, latchId, headerId, base) {
+    if (!el) return;
+    const latch = document.getElementById(latchId);
+    const header = document.getElementById(headerId);
+    if (!latch || !header) return;
+    el.style.setProperty('--be-tgt', (header.getBoundingClientRect().top - base) + 'px');  // land on loop header's top edge
+    el.style.setProperty('--be-src', (latch.getBoundingClientRect().bottom - base) + 'px');     // leave latch at bottom
+    el.style.opacity = '1';
+  }
+  function layoutBackEdge() {
+    if (document.documentElement.getAttribute('data-view') !== 'graph') return;
+    const base = siteContent.getBoundingClientRect().top;
+    placeBackEdge(backEdgeLeft, 'news', 'publications', base);   // inner loop
+    placeBackEdge(backEdgeRight, 'join', 'research', base);      // outer loop
+  }
+  let backEdgeRaf = 0;
+  function scheduleBackEdge() {
+    cancelAnimationFrame(backEdgeRaf);
+    backEdgeRaf = requestAnimationFrame(layoutBackEdge);
+  }
+  window.addEventListener('resize', scheduleBackEdge);
+  window.addEventListener('load', scheduleBackEdge);
+  document.querySelectorAll('.pub-year').forEach((d) => d.addEventListener('toggle', scheduleBackEdge));
+
+  viewButtons.forEach((button) => {
+    button.addEventListener('click', () => setViewMode(button.dataset.viewMode));
+  });
+
+  // In hex mode the page content is hidden, so the nav's section anchors point
+  // at nothing visible — clicking one drops back to linear so the jump lands.
+  document.querySelectorAll('.site-nav a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (document.documentElement.getAttribute('data-view') === 'hex') {
+        setViewMode('linear');
+      }
+    });
+  });
+
+  setViewMode(localStorage.getItem('viewMode') || 'linear');
+</script>
+</body>
+</html>
