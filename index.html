@@ -426,6 +426,27 @@
     .person .plinks { display: flex; gap: 13px; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 3px; }
     .person .plinks a { color: var(--ink-soft); font-size: 1.05rem; line-height: 1; }
     .person .plinks a:hover { color: var(--navy); text-decoration: none; }
+    .person .palumni { font-size: 0.72rem; font-weight: 300; color: var(--ink-soft); opacity: 0.75; margin: -3px 0 7px; }
+
+    details.alumni-block { border-top: 1px solid var(--rule); margin-top: 36px; }
+    summary.alumni-summary {
+      display: flex; align-items: center; gap: 8px;
+      list-style: none; cursor: pointer; user-select: none;
+      padding: 12px 0;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-soft); opacity: 0.6;
+    }
+    summary.alumni-summary::-webkit-details-marker { display: none; }
+    summary.alumni-summary::before {
+      content: "▶";
+      font-size: 0.5rem; color: var(--ink-soft);
+      transition: transform 0.15s ease;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    details.alumni-block[open] summary.alumni-summary::before { transform: rotate(90deg); }
+    summary.alumni-summary:hover { opacity: 0.9; }
+    .alumni-grid { padding-top: 20px; }
+    .alumni-grid .person img { opacity: 0.82; filter: grayscale(40%); }
 
     /* ── News ── */
     .news-entries { display: flex; flex-direction: column; }
@@ -1547,9 +1568,9 @@
         <div class="prole"><a href="https://cispa.de/de/people/c01eyis">Intern</a></div>
       </div>
       <div class="person">
-        <a href="https://cispa.de/en/people/c03zhzh" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="Zhuohao Zhang" style="background:#e2dfd9;"></a>
-        <div class="pname"><a href="https://cispa.de/en/people/c03zhzh">Zhuohao Zhang</a></div>
-        <div class="prole"><a href="https://cispa.de/en/people/c03zhzh">Intern</a></div>
+        <a href="https://cispa.de/en/people/c01isga" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/ismael-gaye.jpg" alt="Ismaël Gaye"></a>
+        <div class="pname"><a href="https://cispa.de/en/people/c01isga">Ismaël Gaye</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c01isga">Intern</a></div>
       </div>
       <div class="person">
         <a href="https://david-dewes.de" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="David Dewes" style="background:#e2dfd9;"></a>
@@ -1563,6 +1584,18 @@
       </div>
 
     </div>
+    <details class="alumni-block">
+      <summary class="alumni-summary">Alumni</summary>
+      <div class="people-grid alumni-grid">
+      <div class="person">
+        <a href="https://cispa.de/en/people/c03zhzh" class="pphoto" tabindex="-1" aria-hidden="true"><img src="assets/profile-placeholder.svg" alt="Zhuohao Zhang" style="background:#e2dfd9;"></a>
+        <div class="pname"><a href="https://cispa.de/en/people/c03zhzh">Zhuohao Zhang</a></div>
+        <div class="prole"><a href="https://cispa.de/en/people/c03zhzh">Intern</a></div>
+        <div class="palumni">Johns Hopkins University · Jun–Aug 2026</div>
+      </div>
+
+      </div>
+    </details>
     <pre class="cfg-tail" aria-hidden="true">jmp     loc_news</pre>
   </div>
 </section>
