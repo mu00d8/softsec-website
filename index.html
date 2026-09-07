@@ -138,6 +138,18 @@
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
 
+    /* Subset of Font Awesome 6 Free Solid (SIL OFL 1.1) — only the award (f559)
+       and trophy (f091) glyphs used for publication badges. Self-hosted, not
+       loaded from a CDN; attribution retained in the font's name table. */
+    @font-face {
+      font-family: 'Font Awesome 6 Free Solid';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url("assets/fonts/fa-solid-subset.woff2") format("woff2");
+      unicode-range: U+f091, U+f559;
+    }
+
     :root {
       --bg:       #efede9;
       --navy:     #1c3052;
@@ -380,25 +392,19 @@
       color: var(--red); border: 1px solid rgba(200,34,34,0.35);
       letter-spacing: 0.02em;
     }
-    .award-tag::before {
-      font-family: "Font Awesome 6 Free";
+    .award-tag::before, .trophy-tag::before {
+      font-family: 'Font Awesome 6 Free Solid';
       font-weight: 900;
-      content: "\f559";
-      margin-right: 4px;
-      font-size: 0.85em;
+      margin-right: 5px;
+      font-size: 1.15em;
     }
     .trophy-tag {
       font-weight: 600;
       color: var(--red); border: 1px solid rgba(200,34,34,0.35);
       letter-spacing: 0.02em;
     }
-    .trophy-tag::before {
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      content: "\f091";
-      margin-right: 4px;
-      font-size: 0.85em;
-    }
+    .award-tag::before { content: "\f559"; }
+    .trophy-tag::before { content: "\f091"; }
     .venue-tag {
       appearance: none; background: transparent; cursor: pointer;
       font-weight: 400; font-family: inherit;
