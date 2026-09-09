@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy | SoftSec Lab</title>
   <meta name="description" content="Privacy policy for the SoftSec Lab website.">
+  <link rel="icon" href="softsec_logo.svg" type="image/svg+xml">
   <style>
     /* Fira Sans, self-hosted (SIL OFL 1.1) — avoids leaking visitor IPs to
        Google Fonts on every page load. Files in assets/fonts/. */
@@ -114,6 +115,17 @@
     .nav-brand img { width: 22px; height: 22px; filter: brightness(0) invert(1); opacity: 0.6; }
     .nav-back { font-size: 0.88rem; color: rgba(255,255,255,0.55); }
     .nav-back:hover { color: #fff; text-decoration: none; }
+    .theme-toggle {
+      background: none; border: none; cursor: pointer; line-height: 1;
+      color: rgba(255,255,255,0.55); font-size: 0.95rem;
+      padding: 6px 8px; border-radius: 4px; transition: color 0.15s;
+      flex-shrink: 0; margin-left: 14px;
+    }
+    .theme-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .theme-toggle svg { display: block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle svg.icon-sun { display: none; }
+    [data-theme="dark"] .theme-toggle svg.icon-moon { display: none; }
+    [data-theme="dark"] .theme-toggle svg.icon-sun { display: block; }
 
     /* Content */
     main { flex: 1; padding: 64px 0 80px; }
@@ -122,6 +134,8 @@
 
     .doc { max-width: 640px; }
     .doc h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 36px; }
+    .doc h2 { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); opacity: 0.5; margin: 28px 0 8px; }
+    .doc h2:first-of-type { margin-top: 0; }
     .doc p { font-size: 0.97rem; font-weight: 300; color: var(--ink); margin-bottom: 16px; line-height: 1.75; }
 
     /* Footer */
@@ -129,6 +143,20 @@
     .footer-inner { max-width: 960px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
     footer a { color: rgba(255,255,255,0.35); }
     footer a:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+    /* Dark mode */
+    [data-theme="dark"] {
+      --bg: #0f1c2d;
+      --navy: #081422;
+      --ink: #dce8f5;
+      --ink-soft: #8aa4bf;
+      --rule: rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+    [data-theme="dark"] a { color: #7ab0f0; }
+    [data-theme="dark"] a:hover { color: #a8ccf8; }
+    [data-theme="dark"] .doc h1 { color: #dce8f5; }
+    [data-theme="dark"] .doc h2 { color: #7ab0f0; opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -139,7 +167,13 @@
       <img src="softsec_logo.svg" alt="">
       SoftSec Lab
     </a>
-    <a class="nav-back" href="index.html">← Back</a>
+    <div style="display:flex;align-items:center;">
+      <a class="nav-back" href="index.html">← Back</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -176,6 +210,23 @@
     <span><a href="index.html">Home</a> · <a href="imprint.html">Imprint</a></span>
   </div>
 </footer>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  toggle.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (dark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+</script>
 
 </body>
 </html>
