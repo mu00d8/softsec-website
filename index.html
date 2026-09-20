@@ -429,6 +429,7 @@
     .person .palumni { font-size: 0.72rem; font-weight: 300; color: var(--ink-soft); opacity: 0.75; margin: -3px 0 7px; }
 
     details.alumni-block { border-top: 1px solid var(--rule); margin-top: 36px; }
+    details.news-older { border-top: 1px solid var(--rule); margin-top: 4px; }
     summary.alumni-summary {
       display: flex; align-items: center; gap: 8px;
       list-style: none; cursor: pointer; user-select: none;
@@ -443,10 +444,14 @@
       transition: transform 0.15s ease;
       flex-shrink: 0; margin-top: 1px;
     }
-    details.alumni-block[open] summary.alumni-summary::before { transform: rotate(90deg); }
+    details.alumni-block[open] summary.alumni-summary::before,
+    details.news-older[open] summary.alumni-summary::before { transform: rotate(90deg); }
     summary.alumni-summary:hover { opacity: 0.9; }
     .alumni-grid { padding-top: 20px; }
     .alumni-grid .person img { opacity: 0.82; filter: grayscale(40%); }
+    .news-older-entries { padding-top: 4px; }
+    .news-older-entries .news-entry:first-child { border-top: 1px solid rgba(196,191,184,0.45); }
+    [data-view="graph"] .news-older-entries .news-entry:first-child { border-top-color: rgba(28,48,82,0.18); }
 
     /* ── News ── */
     .news-entries { display: flex; flex-direction: column; }
@@ -1626,6 +1631,11 @@
         <span class="news-date">Nov 2025</span>
         <span class="news-text">"Empirical Security Analysis of Software-based Fault Isolation" wins a <span class="award">Distinguished Paper Award</span> at <strong>ACM CCS 2025</strong>.</span>
       </div>
+
+    </div>
+    <details class="news-older">
+      <summary class="alumni-summary">Older</summary>
+      <div class="news-entries news-older-entries">
       <div class="news-entry">
         <span class="news-date">Aug 2025</span>
         <span class="news-text">"Confusing Value with Enumeration: Studying the Use of CVEs in Academia" wins a <span class="award">Distinguished Paper Award</span> at <strong>USENIX Security 2025</strong>.</span>
@@ -1646,8 +1656,9 @@
         <span class="news-date">May 2023</span>
         <span class="news-text">Space Odyssey wins a <span class="award">Distinguished Paper Award</span> at <strong>IEEE S&amp;P 2023</strong>.</span>
       </div>
+      </div>
+    </details>
 
-    </div>
     <pre class="cfg-tail" aria-hidden="true">cmp     dword ptr [news_idx], news_count
 jne     loc_pubs
 jmp     loc_join</pre>
