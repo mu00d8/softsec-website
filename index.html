@@ -230,47 +230,47 @@
 
     /* ── Dark mode ── */
     [data-theme="dark"] {
-      --bg: #0f1c2d;
-      --navy: #081422;
-      --ink: #dce8f5;
-      --ink-soft: #8aa4bf;
-      --rule: rgba(255,255,255,0.1);
+      --bg: #111b23;          /* slate charcoal, after provsec.org's dark mode */
+      --navy: #0c151c;
+      --ink: #c4d0d9;          /* body text slightly muted; headings use #e3ebf0 */
+      --ink-soft: #8597a5;
+      --rule: #273846;
       --red: #e06060;
     }
     [data-theme="dark"] body { background: var(--bg); color: var(--ink); }
-    [data-theme="dark"] a { color: #7ab0f0; }
-    [data-theme="dark"] a:hover { color: #a8ccf8; }
-    [data-theme="dark"] h2.section-heading { color: #dce8f5; }
-    [data-theme="dark"] .section-eyebrow { color: #7ab0f0; opacity: 0.9; }
-    [data-theme="dark"] .track-num { border-color: #7ab0f0; color: #7ab0f0; }
-    [data-theme="dark"] .track h3 { color: #dce8f5; }
-    [data-theme="dark"] details.pub-year { border-color: rgba(255,255,255,0.1); }
-    [data-theme="dark"] summary.pub-yr-summary { color: #7ab0f0; opacity: 0.9; }
-    [data-theme="dark"] summary.pub-yr-summary::before { color: #7ab0f0; }
+    [data-theme="dark"] a { color: #9cc0d8; }
+    [data-theme="dark"] a:hover { color: #c2dbea; }
+    [data-theme="dark"] h2.section-heading { color: #e3ebf0; }
+    [data-theme="dark"] .section-eyebrow { color: #9cc0d8; opacity: 0.9; }
+    [data-theme="dark"] .track-num { border-color: #9cc0d8; color: #9cc0d8; }
+    [data-theme="dark"] .track h3 { color: #e3ebf0; }
+    [data-theme="dark"] details.pub-year { border-color: var(--rule); }
+    [data-theme="dark"] summary.pub-yr-summary { color: #9cc0d8; opacity: 0.9; }
+    [data-theme="dark"] summary.pub-yr-summary::before { color: #9cc0d8; }
     [data-theme="dark"] .pub-entry { border-color: rgba(255,255,255,0.08); }
-    [data-theme="dark"] .pub-entry .pt { color: #dce8f5; }
-    [data-theme="dark"] .pub-entry .pa strong { color: #8fb0de; }
-    [data-theme="dark"] .pub-entry .pt a { color: #dce8f5; }
-    [data-theme="dark"] .pub-entry .pt a:hover { color: #7ab0f0; }
-    [data-theme="dark"] .pub-yr-header { color: #7ab0f0; opacity: 0.9; }
-    [data-theme="dark"] .venue-tag { color: #7ab0f0; border-color: rgba(122,176,240,0.3); }
+    [data-theme="dark"] .pub-entry .pt { color: #e3ebf0; }
+    [data-theme="dark"] .pub-entry .pa strong { color: #a9c3d4; }
+    [data-theme="dark"] .pub-entry .pt a { color: #e3ebf0; }
+    [data-theme="dark"] .pub-entry .pt a:hover { color: #9cc0d8; }
+    [data-theme="dark"] .pub-yr-header { color: #9cc0d8; opacity: 0.9; }
+    [data-theme="dark"] .venue-tag { color: #9cc0d8; border-color: rgba(156,192,216,0.3); }
     [data-theme="dark"] .venue-tag:hover,
-    [data-theme="dark"] .venue-tag[aria-pressed="true"] { border-color: #7ab0f0; color: #a8ccf8; }
+    [data-theme="dark"] .venue-tag[aria-pressed="true"] { border-color: #9cc0d8; color: #c2dbea; }
     [data-theme="dark"] .pub-filter strong,
-    [data-theme="dark"] .pub-filter button { color: #7ab0f0; }
-    [data-theme="dark"] .pub-filter button:hover { border-color: #7ab0f0; }
-    [data-theme="dark"] .person .pname { color: #dce8f5; }
-    [data-theme="dark"] .person .pname a { color: #dce8f5; }
+    [data-theme="dark"] .pub-filter button { color: #9cc0d8; }
+    [data-theme="dark"] .pub-filter button:hover { border-color: #9cc0d8; }
+    [data-theme="dark"] .person .pname { color: #e3ebf0; }
+    [data-theme="dark"] .person .pname a { color: #e3ebf0; }
     [data-theme="dark"] .person .prole a { color: var(--ink-soft); }
     [data-theme="dark"] .person .plinks a { color: var(--ink-soft); }
-    [data-theme="dark"] .person .plinks a:hover { color: #7ab0f0; }
-    [data-theme="dark"] .news-text strong { color: #dce8f5; }
-    [data-theme="dark"] .pos-name { color: #dce8f5; }
-    [data-theme="dark"] .pos-btn { border-color: #7ab0f0; color: #7ab0f0; }
-    [data-theme="dark"] .pos-btn:hover { background: #7ab0f0; color: var(--bg); }
-    [data-theme="dark"] .contact-block h3 { color: #7ab0f0; opacity: 0.8; }
+    [data-theme="dark"] .person .plinks a:hover { color: #9cc0d8; }
+    [data-theme="dark"] .news-text strong { color: #e3ebf0; }
+    [data-theme="dark"] .pos-name { color: #e3ebf0; }
+    [data-theme="dark"] .pos-btn { border-color: #9cc0d8; color: #9cc0d8; }
+    [data-theme="dark"] .pos-btn:hover { background: #9cc0d8; color: var(--bg); }
+    [data-theme="dark"] .contact-block h3 { color: #9cc0d8; opacity: 0.8; }
     [data-theme="dark"] .contact-block p { color: var(--ink-soft); }
-    [data-theme="dark"] .contact-block a { color: #7ab0f0; }
+    [data-theme="dark"] .contact-block a { color: #9cc0d8; }
 
     /* ── Wrap ── */
     .wrap { max-width: 860px; margin: 0 auto; padding: 0 40px; }
@@ -329,7 +329,7 @@
     .track-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
     .track-tag { font-size: 0.73rem; color: var(--ink-soft); border: 1px solid var(--rule); padding: 2px 8px; text-decoration: none; }
     a.track-tag:hover { color: var(--navy); border-color: var(--navy); text-decoration: none; }
-    [data-theme="dark"] a.track-tag:hover { color: #a8ccf8; border-color: #a8ccf8; }
+    [data-theme="dark"] a.track-tag:hover { color: #c2dbea; border-color: #c2dbea; }
 
     /* ── Publications ── */
     details.pub-year { border-top: 1px solid var(--rule); }
@@ -339,7 +339,7 @@
       list-style: none; cursor: pointer; user-select: none;
       padding: 12px 0;
       font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--navy); opacity: 0.55;
+      text-transform: uppercase; color: var(--navy); opacity: 0.38;
     }
     summary.pub-yr-summary::-webkit-details-marker { display: none; }
     summary.pub-yr-summary::before {
@@ -425,7 +425,7 @@
       .person:hover img { box-shadow: 0 0 0 3px var(--ring-gap), 0 0 0 5px var(--ring); }
     }
     .person:focus-within img { box-shadow: 0 0 0 3px var(--ring-gap), 0 0 0 5px var(--ring); }
-    [data-theme="dark"] .person { --ring: #7ab0f0; }
+    [data-theme="dark"] .person { --ring: #9cc0d8; }
     [data-view="graph"] .person { --ring-gap: var(--cfg-block); }
     .person .pname { font-size: 0.97rem; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
     .person .pname a { color: var(--navy); }
@@ -1000,32 +1000,32 @@
     [data-view="graph"] .news-entry { border-color: rgba(28,48,82,0.18); }
     [data-view="graph"] .people-grid { gap: 24px; }
     [data-theme="dark"][data-view="graph"] {
-      --cfg-line: rgba(122,176,240,0.36);
-      --cfg-line-soft: rgba(122,176,240,0.08);
-      --cfg-label: #7ab0f0;
-      --cfg-muted: #8aa4bf;
-      --cfg-head: rgba(122,176,240,0.08);
-      --cfg-block: rgba(15,28,45,0.96);
+      --cfg-line: rgba(156,192,216,0.36);
+      --cfg-line-soft: rgba(156,192,216,0.08);
+      --cfg-label: #9cc0d8;
+      --cfg-muted: #8597a5;
+      --cfg-head: rgba(156,192,216,0.08);
+      --cfg-block: rgba(23,36,46,0.96);
       --cfg-true: #2ea043;
       --cfg-false: #dc4545;
     }
     [data-theme="dark"][data-view="graph"] body {
-      background-color: #0f1c2d;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='160' viewBox='0 0 1440 160'%3E%3Cg fill='%237ab0f0' fill-opacity='0.04' font-family='monospace' font-size='13' letter-spacing='2'%3E%3Ctext x='0' y='20' textLength='1440' lengthAdjust='spacing'%3E01001000 10110110 00101101 11100010 01010101 10011001 01101000 00011101 10100110 01001011 11010010 00110101%3C/text%3E%3Ctext x='0' y='52' textLength='1440' lengthAdjust='spacing'%3E10010110 01000011 11101001 00110100 01111100 10100001 01011010 11000101 00101110 11110000 01010111 10001001%3C/text%3E%3Ctext x='0' y='84' textLength='1440' lengthAdjust='spacing'%3E00110010 11110100 01001111 10001000 01100101 00101110 11011010 01010011 01110001 10011100 00010110 11101010%3C/text%3E%3Ctext x='0' y='116' textLength='1440' lengthAdjust='spacing'%3E11100001 00010110 10101001 01000100 11001101 00110011 10010010 01101110 01011001 11100100 10110010 00101011%3C/text%3E%3Ctext x='0' y='148' textLength='1440' lengthAdjust='spacing'%3E01101100 10001010 11010101 00111100 10100101 01010010 11111000 00010011 10000110 01110101 00101001 11001110%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-color: #111b23;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='160' viewBox='0 0 1440 160'%3E%3Cg fill='%239cc0d8' fill-opacity='0.04' font-family='monospace' font-size='13' letter-spacing='2'%3E%3Ctext x='0' y='20' textLength='1440' lengthAdjust='spacing'%3E01001000 10110110 00101101 11100010 01010101 10011001 01101000 00011101 10100110 01001011 11010010 00110101%3C/text%3E%3Ctext x='0' y='52' textLength='1440' lengthAdjust='spacing'%3E10010110 01000011 11101001 00110100 01111100 10100001 01011010 11000101 00101110 11110000 01010111 10001001%3C/text%3E%3Ctext x='0' y='84' textLength='1440' lengthAdjust='spacing'%3E00110010 11110100 01001111 10001000 01100101 00101110 11011010 01010011 01110001 10011100 00010110 11101010%3C/text%3E%3Ctext x='0' y='116' textLength='1440' lengthAdjust='spacing'%3E11100001 00010110 10101001 01000100 11001101 00110011 10010010 01101110 01011001 11100100 10110010 00101011%3C/text%3E%3Ctext x='0' y='148' textLength='1440' lengthAdjust='spacing'%3E01101100 10001010 11010101 00111100 10100101 01010010 11111000 00010011 10000110 01110101 00101001 11001110%3C/text%3E%3C/g%3E%3C/svg%3E");
       background-repeat: repeat;
       background-size: 1440px 160px;
       background-attachment: fixed;
     }
     [data-theme="dark"][data-view="graph"] .hero,
     [data-theme="dark"][data-view="graph"] .section {
-      box-shadow: 0 12px 26px rgba(0,0,0,0.26), 0 0 0 1px rgba(122,176,240,0.04);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.26), 0 0 0 1px rgba(156,192,216,0.04);
     }
     [data-theme="dark"][data-view="graph"] .cfg-minimap {
-      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(122,176,240,0.04);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(156,192,216,0.04);
     }
     [data-theme="dark"][data-view="graph"] .research-case {
       background: var(--cfg-block);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(122,176,240,0.04);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.24), 0 0 0 1px rgba(156,192,216,0.04);
     }
     [data-theme="dark"][data-view="graph"] .research-case h3,
     [data-theme="dark"][data-view="graph"] .research-case p { color: var(--ink); }
